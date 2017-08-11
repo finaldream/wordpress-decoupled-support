@@ -1,0 +1,12 @@
+{
+  "name": "finaldream/wordpress-dcoupled-support",
+  "description": "Dcoupled support for Wordpress",
+  "type": "wordpress-plugin",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Louis Thai",
+      "email": "louis.thai@finaldream.de"
+    }
+  ],
+}
