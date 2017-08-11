@@ -17,9 +17,24 @@ class RestFields
      */
     public function registerRestFields()
     {
+	    $this->registerPermalinkField();
         $this->registerPostClassesField();
         $this->registerPostThumbnailField();
         $this->registerACFField();
+    }
+
+    public function registerPermalinkField() {
+	    register_rest_field( ['post', 'page', 'video', 'short_post'], 'permalink', [
+		    'get_callback' => function( $object ) {
+	    	    $domainRegex = '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i';
+			    return preg_replace ($domainRegex, '$2', '' . get_permalink());
+		    },
+		    'update_callback' => null,
+		    'schema' => [
+			    'description' => __( 'Permalink' ),
+			    'type'        => 'string'
+		    ],
+	    ]);
     }
 
     /**
