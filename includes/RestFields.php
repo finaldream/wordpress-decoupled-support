@@ -12,11 +12,16 @@
  */
 class RestFields
 {
+	public $objectTypes;
+
     /**
      * Add rest fields
      */
     public function registerRestFields()
     {
+    	$postTypes = get_post_types(['public' => true, 'exclude_from_search' => false]);
+	    $this->objectTypes = apply_filters('dcoupled_rest_allowed_object_types', $postTypes);
+
 	    $this->registerPermalinkField();
         $this->registerPostClassesField();
         $this->registerPostThumbnailField();
@@ -24,7 +29,7 @@ class RestFields
     }
 
     public function registerPermalinkField() {
-	    register_rest_field( ['post', 'page', 'video', 'short_post'], 'permalink', [
+	    register_rest_field( $this->objectTypes, 'permalink', [
 		    'get_callback' => function( $object ) {
 	    	    $domainRegex = '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i';
 			    return preg_replace ($domainRegex, '$2', '' . get_permalink());
@@ -42,7 +47,7 @@ class RestFields
      */
     public function registerPostClassesField()
     {
-        register_rest_field( ['post', 'page', 'video', 'short_post'], 'classes', [
+        register_rest_field( $this->objectTypes, 'classes', [
             'get_callback' => function( $object ) {
                 return join( ' ', get_post_class());
             },
@@ -59,7 +64,7 @@ class RestFields
      */
     public function registerPostThumbnailField()
     {
-        register_rest_field( ['post', 'page', 'video', 'short_post'], 'thumbnail', [
+        register_rest_field( $this->objectTypes, 'thumbnail', [
             'get_callback' => function( $object ) {
                 $thumbnail = get_post(get_post_thumbnail_id());
 
@@ -86,7 +91,7 @@ class RestFields
     		return;
 	    }
 
-        register_rest_field( ['post', 'page', 'video', 'short_post'], 'acf', [
+        register_rest_field( $this->objectTypes, 'acf', [
                 'get_callback'    => function($object) {
                     $allowed = apply_filters('dcoupled_rest_allowed_acf_fields', []);
                     $acfFields = get_fields($object[ 'id' ]);
