@@ -19,15 +19,19 @@ class RestFields
      */
     public function registerRestFields()
     {
-    	$postTypes = get_post_types(['public' => true, 'exclude_from_search' => false]);
+    	$postTypes = get_post_types([ 'show_in_rest' => true ]);
 	    $this->objectTypes = apply_filters('dcoupled_rest_allowed_object_types', $postTypes);
 
 	    $this->registerPermalinkField();
         $this->registerPostClassesField();
         $this->registerPostThumbnailField();
         $this->registerACFField();
+        $this->registerWPMLField();
     }
 
+	/**
+	 * Relative permalink field
+	 */
     public function registerPermalinkField() {
 	    register_rest_field( $this->objectTypes, 'permalink', [
 		    'get_callback' => function( $object ) {
@@ -115,5 +119,59 @@ class RestFields
                 ],
             ]
         );
+    }
+
+	/**
+	 * WPML Locate filed
+	 */
+    public function registerWPMLField() {
+	    if (!function_exists('wpml_get_language_information')) {
+		    return;
+	    }
+
+	    register_rest_field( $this->objectTypes, 'wpml', [
+		    'get_callback' => function( $object ) {
+			    $languages = apply_filters('wpml_active_languages', []);
+			    $translations = [];
+
+			    foreach ($languages as $language) {
+
+				    //$postId = wpml_object_id_filter($object['id'], 'post', false, $language['language_code']);
+				    $postId = apply_filters( 'wpml_object_id', $object['id'], 'post', false, $language['language_code']);
+
+				    if (!$postId || $postId === $object['id']) {
+				    	continue;
+				    }
+
+				    $post = get_post($postId);
+				    $uri = get_page_uri($postId);
+				    $permalink = apply_filters('WPML_filter_link', $language['url'], $language);
+
+				    if (strpos($permalink, '?') !== false) {
+					    $permalink = str_replace('?', '/'.$uri.'/?', $permalink);
+				    } else {
+					    $permalink .= (substr($permalink, -1) !== '/') ? '/' : '';
+					    $permalink .= $uri . '/';
+				    }
+
+				    $translations[] = [
+				    	'locale' => $language['default_locale'],
+					    'id' => $post->ID,
+					    'post_title' => $post->post_title,
+					    'permalink' => $permalink,
+				    ];
+			    }
+
+			    return [
+			    	'current_locate' => wpml_get_language_information($object),
+				    'translations' => $translations,
+			    ];
+		    },
+		    'update_callback' => null,
+		    'schema' => [
+			    'description' => __( 'WPML Locate' ),
+			    'type'        => 'array'
+		    ],
+	    ]);
     }
 }

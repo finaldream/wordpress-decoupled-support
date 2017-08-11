@@ -17,11 +17,13 @@ include_once 'includes/RestToken.php';
 include_once 'includes/RestFields.php';
 include_once 'includes/RestMenus.php';
 include_once 'includes/RestSingle.php';
+include_once 'includes/RestWPML.php';
 
 function dcoupled_rest_api_init() {
 	(new RestSingle())->registerSingleRoutes();
 	(new RestMenus())->registerMenuRoutes();
 	(new RestFields())->registerRestFields();
+	(new RestWPML())->registerFilters();
 }
 
 function dcoupled_rest_authentication($result) {
