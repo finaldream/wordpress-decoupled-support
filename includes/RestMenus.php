@@ -34,27 +34,36 @@ class RestMenus
      *
      * @return array All registered menus
      */
-    public function getMenus() {
+    public function getMenus($request) {
+	    $lang = $request->get_param('lang');
+	    $locations        = get_nav_menu_locations();
+	    $registeredMenus = get_registered_nav_menus();
 
-        $wp_menus = wp_get_nav_menus();
+	    $rest_menus = [
+		    'result' => [],
+	    ];
 
-        $rest_menus = [
-            'result' => [],
-        ];
+	    if (isset($lang)) {
+		    do_action('wpml_switch_language', $lang);
+	    }
 
-        foreach ($wp_menus as $menu) {
+	    foreach ($registeredMenus as $locationId => $label) {
+		    if (!isset($locations[$locationId])) {
+			    continue;
+		    }
 
-            $id = str_replace('-', '', lcfirst(ucwords($menu->slug, '-')));
+		    $menu = wp_get_nav_menu_object($locations[$locationId]);
 
-            $rest_menus['result']['menus'][$id]                = [];
-            $rest_menus['result']['menus'][$id]['ID']          = $menu->term_id;
-            $rest_menus['result']['menus'][$id]['name']        = $menu->name;
-            $rest_menus['result']['menus'][$id]['slug']        = $menu->slug;
-            $rest_menus['result']['menus'][$id]['description'] = $menu->description;
-            $rest_menus['result']['menus'][$id]['count']       = $menu->count;
+		    $rest_menus['result']['menus'][$locationId]                = [];
+		    $rest_menus['result']['menus'][$locationId]['ID']          = $menu->term_id;
+		    $rest_menus['result']['menus'][$locationId]['name']        = $menu->name;
+		    $rest_menus['result']['menus'][$locationId]['slug']        = $menu->slug;
+		    $rest_menus['result']['menus'][$locationId]['description'] = $menu->description;
+		    $rest_menus['result']['menus'][$locationId]['count']       = $menu->count;
 
-            $rest_menus['result']['menus'][$id]['items']       = $this->getChildren($menu->slug);
-        }
+		    $rest_menus['result']['menus'][$locationId]['items']       = $this->getChildren($menu->slug);
+
+	    }
 
         return rest_ensure_response($rest_menus);
     }
@@ -168,13 +177,14 @@ class RestMenus
     public function formatMenuItem($menu_item, $children = false, $menu = []) {
 
         $item = (array) $menu_item;
+	    $domainRegex = '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i';
 
         $menu_item = [
             'id'          => abs( $item['ID'] ),
             'order'       => (int) $item['menu_order'],
             'parent'      => abs( $item['menu_item_parent'] ),
             'title'       => $item['title'],
-            'url'         => $item['url'],
+            'url'         => preg_replace ($domainRegex, '$2', '' . $item['url']),
             'attr'        => $item['attr_title'],
             'target'      => $item['target'],
             'classes'     => implode( ' ', apply_filters('nav_menu_css_class', array_filter($item['classes']), $item ) ),

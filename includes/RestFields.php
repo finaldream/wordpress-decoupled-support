@@ -14,6 +14,8 @@ class RestFields
 {
 	public $objectTypes;
 
+	public $domainRegex = '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i';
+
     /**
      * Add rest fields
      */
@@ -27,7 +29,41 @@ class RestFields
         $this->registerPostThumbnailField();
         $this->registerACFField();
         $this->registerWPMLField();
+        $this->registerTemplateField();
     }
+
+	/**
+	 * Template field
+	 */
+	public function registerTemplateField() {
+		register_rest_field( $this->objectTypes, 'template', [
+			'get_callback' => function( $object ) {
+				$template = $object['type'];
+				$related[] = get_option('page_on_front');
+
+				if (!empty($related)) {
+					if (function_exists('wpml_active_languages')) {
+						$languages = apply_filters('wpml_active_languages', []);
+
+						$related = array_values(array_map(function($language) use ($related) {
+							return apply_filters( 'wpml_object_id', $related[0], 'page', false, $language['language_code']);
+						}, $languages));
+					}
+				}
+
+				if (in_array($object['id'], $related)) {
+					$template = 'index';
+				}
+
+				return $template;
+			},
+			'update_callback' => null,
+			'schema' => [
+				'description' => __( 'Template type' ),
+				'type'        => 'string'
+			],
+		]);
+	}
 
 	/**
 	 * Relative permalink field
@@ -35,8 +71,7 @@ class RestFields
     public function registerPermalinkField() {
 	    register_rest_field( $this->objectTypes, 'permalink', [
 		    'get_callback' => function( $object ) {
-	    	    $domainRegex = '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i';
-			    return preg_replace ($domainRegex, '$2', '' . get_permalink());
+			    return preg_replace ($this->domainRegex, '$2', '' . get_permalink());
 		    },
 		    'update_callback' => null,
 		    'schema' => [
@@ -133,37 +168,54 @@ class RestFields
 		    'get_callback' => function( $object ) {
 			    $languages = apply_filters('wpml_active_languages', []);
 			    $translations = [];
+			    $frontPageId = get_option('page_on_front');
+			    $frontPages = [];
+
+			    if ($frontPageId) {
+				    $frontPages = array_values(array_map(function($language) use ($frontPageId) {
+					    return apply_filters( 'wpml_object_id', $frontPageId, 'page', false, $language['language_code']);
+				    }, $languages));
+			    }
 
 			    foreach ($languages as $language) {
 
-				    //$postId = wpml_object_id_filter($object['id'], 'post', false, $language['language_code']);
 				    $postId = apply_filters( 'wpml_object_id', $object['id'], 'post', false, $language['language_code']);
 
 				    if (!$postId || $postId === $object['id']) {
-				    	continue;
+					    continue;
 				    }
 
 				    $post = get_post($postId);
-				    $uri = get_page_uri($postId);
+
+				    if ($post && $post->post_status !== 'publish') {
+					    continue;
+				    }
+
 				    $permalink = apply_filters('WPML_filter_link', $language['url'], $language);
 
-				    if (strpos($permalink, '?') !== false) {
-					    $permalink = str_replace('?', '/'.$uri.'/?', $permalink);
-				    } else {
-					    $permalink .= (substr($permalink, -1) !== '/') ? '/' : '';
-					    $permalink .= $uri . '/';
+				    // Not add uri into front pages
+				    if (!in_array($postId, $frontPages)) {
+					    $uri = get_page_uri($postId);
+
+					    if (strpos($permalink, '?') !== false) {
+						    $permalink = str_replace('?', '/'.$uri.'/?', $permalink);
+					    } else {
+						    $permalink .= (substr($permalink, -1) !== '/') ? '/' : '';
+						    $permalink .= $uri . '/';
+					    }
 				    }
 
 				    $translations[] = [
-				    	'locale' => $language['default_locale'],
+					    'locale' => $language['default_locale'],
+					    'code' => $language['language_code'],
 					    'id' => $post->ID,
 					    'post_title' => $post->post_title,
-					    'permalink' => $permalink,
+					    'permalink' => preg_replace ($this->domainRegex, '$2', $permalink),
 				    ];
 			    }
 
 			    return [
-			    	'current_locate' => wpml_get_language_information($object),
+				    'current_locate' => wpml_get_language_information($object),
 				    'translations' => $translations,
 			    ];
 		    },
