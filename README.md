@@ -1,2 +1,2 @@
 # Wordpress Dcoupled Support
-Add Dcoupled client supports for WP REST API
+Add dcoupled client supports for WP REST API

@@ -5,8 +5,12 @@
   "license": "MIT",
   "authors": [
     {
+      "name": "Oliver Erdmann",
+      "email": "o.erdmann@finaldream.de"
+    },
+    {
       "name": "Louis Thai",
       "email": "louis.thai@finaldream.de"
     }
-  ],
+  ]
 }

@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name:       Dcoupled Support
- * Plugin URI:        http://finaldream.de
+ * Plugin URI:        https://www.finaldream.de
  * Description:       Add Dcoupled client supports for WP REST API
  * Version:           0.0.1
- * Author:            Louis Thai
- * Author URI:        http://finaldream.de
+ * Author:            Finaldream Productions
+ * Author URI:        https://www.finaldream.de
  * License:           MIT
  */
 
