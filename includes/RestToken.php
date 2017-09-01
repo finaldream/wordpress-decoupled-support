@@ -15,7 +15,9 @@ class RestToken {
 
 	public function protect($result) {
 
-		if (!empty($result) || !defined('WP_API_DCOUPLED_TOKEN')) {
+		$token = get_option('dcoupled_token', '');
+
+		if (!empty($result) || empty($token)) {
 			return $result;
 		}
 
@@ -23,7 +25,7 @@ class RestToken {
 
 		if (!isset($headers['dcoupled-token'])) {
 			$this->error = new WP_Error('rest_authentication_error','Access denied.');
-		} elseif (defined('WP_API_DCOUPLED_TOKEN') && $headers['dcoupled-token'] !== WP_API_DCOUPLED_TOKEN) {
+		} elseif ($headers['dcoupled-token'] !== $token) {
 			$this->error = new WP_Error('rest_authentication_error','Invalid token.');
 		}
 

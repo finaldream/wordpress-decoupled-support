@@ -18,6 +18,8 @@ include_once 'includes/RestFields.php';
 include_once 'includes/RestMenus.php';
 include_once 'includes/RestSingle.php';
 include_once 'includes/RestWPML.php';
+include_once 'includes/RestAdmin.php';
+include_once 'includes/RestPublishTrigger.php';
 
 function dcoupled_rest_api_init() {
 	(new RestSingle())->registerSingleRoutes();
@@ -32,3 +34,10 @@ function dcoupled_rest_authentication($result) {
 
 add_action('rest_api_init', 'dcoupled_rest_api_init');
 add_filter('rest_authentication_errors', 'dcoupled_rest_authentication');
+
+function dcoupled_settings() {
+	(new RestAdmin())->addSettings();
+	(new RestPublishTrigger())->register();
+}
+
+add_action('init', 'dcoupled_settings');
