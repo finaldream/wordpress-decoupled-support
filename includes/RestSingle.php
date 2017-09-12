@@ -18,7 +18,8 @@ class RestSingle
      * Register menus route.
      * @return void
      */
-    public function registerSingleRoutes() {
+    public function registerSingleRoutes()
+    {
 
         register_rest_route( static::API_NAMESPACE, '/permalink', [
             [
@@ -31,55 +32,40 @@ class RestSingle
                 ],
             ]
         ]);
-
     }
 
-    public function getSingle($request) {
+    public function getSingle($request)
+    {
         $q = $request['q'];
 
-        if (is_string($q) && !empty($q)) {
-            $types = get_post_types([ 'show_in_rest' => true ]);
-
-            $args = [
-                'post_type' => array_keys($types),
-                'post_status' => 'publish',
-                'posts_per_page' => 1,
-            ];
-
-            if ($q === '/' && get_option('show_on_front') === 'page') {
-                $args['p'] = get_option( 'page_on_front' );
-                $template = 'index';
-            } else {
-                $args['name'] = $q;
-            }
-
-            $query = new WP_Query( $args );
-
-            if( $query->have_posts() ) {
-                $query->the_post();
-
-                $template = (isset($template)) ? $template : $query->post->post_type;
-
-                $serialized = $this->serialize($query->post, $request, $template);
-
-                return rest_ensure_response($serialized);
-            } else {
-                return new WP_Error( 'REST_NOT_FOUND', 'No single found', ['status' => 404]);
-            }
-
-        } else {
+        if (!is_string($q) || empty($q)) {
             return new WP_Error('REST_INVALID', 'Please provide a valid permalink', ['status' => 400]);
         }
+
+        $postId = url_to_postid($q);
+        $post = get_post($postId);
+
+        if (!$post) {
+            return new WP_Error( 'REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $q]);
+        }
+
+        $template = (isset($template)) ? $template : $post->post_type;
+
+
+        $serialized = $this->serialize($post, $request, $template);
+
+        return rest_ensure_response($serialized);
     }
 
-    private function serialize($post, $request, $template) {
+    private function serialize($post, $request, $template)
+    {
         $controller = new WP_REST_Posts_Controller($post->post_type);
 
         $prepared = $controller->prepare_item_for_response($post, $request);
 
         return $response = [
-            'result' => [$prepared->data],
-            'meta' => [
+        'result' => [$prepared->data],
+        'meta' => [
                 'type' => $post->post_type,
                 'view_mode' => 'single',
                 'template' => $template,
