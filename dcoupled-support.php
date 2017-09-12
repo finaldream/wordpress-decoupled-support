@@ -22,6 +22,9 @@ include_once 'includes/RestAdmin.php';
 include_once 'includes/RestPublishTrigger.php';
 include_once 'includes/RestList.php';
 
+include_once 'includes/thirdparty/WpmlSupport.php';
+
+
 function dcoupled_rest_api_init()
 {
     (new RestSingle())->registerSingleRoutes();
@@ -37,12 +40,17 @@ function dcoupled_rest_authentication($result)
 }
 
 add_action('rest_api_init', 'dcoupled_rest_api_init');
-add_filter('rest_authentication_errors', 'dcoupled_rest_authentication');
+//add_filter('rest_authentication_errors', 'dcoupled_rest_authentication');
 
-function dcoupled_settings()
-{
+
+add_action('init', function() {
+
     (new RestAdmin())->addSettings();
     (new RestPublishTrigger())->register();
-}
 
-add_action('init', 'dcoupled_settings');
+    /* Initialize third-parties */
+    if (WpmlSupport::isAvailable()) {
+        new WpmlSupport();
+    }
+});
+
