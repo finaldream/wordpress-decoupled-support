@@ -40,10 +40,10 @@ function dcoupled_rest_authentication($result)
 }
 
 add_action('rest_api_init', 'dcoupled_rest_api_init');
-//add_filter('rest_authentication_errors', 'dcoupled_rest_authentication');
+add_filter('rest_authentication_errors', 'dcoupled_rest_authentication');
 
 
-add_action('init', function() {
+add_action('init', function () {
 
     (new RestAdmin())->addSettings();
     (new RestPublishTrigger())->register();
@@ -53,4 +53,3 @@ add_action('init', function() {
         new WpmlSupport();
     }
 });
-

@@ -42,14 +42,21 @@ class RestSingle
             return new WP_Error('REST_INVALID', 'Please provide a valid permalink', ['status' => 400]);
         }
 
-        $postId = url_to_postid($q);
+        if ($q === '/' && get_option('show_on_front') === 'page') {
+            $postId = get_option( 'page_on_front' );
+            $template = 'index';
+        } else {
+            $args['name'] = $q;
+            $postId = url_to_postid($q);
+        }
+
         $post = get_post($postId);
 
         if (!$post) {
             return new WP_Error( 'REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $q]);
         }
 
-        $template = (isset($template)) ? $template : $post->post_type;
+        $template = (!empty($template)) ? $template : $post->post_type;
 
 
         $serialized = $this->serialize($post, $request, $template);
