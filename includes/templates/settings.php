@@ -17,6 +17,11 @@
         <table class="form-table">
             <tbody>
             <tr>
+                <td colspan="2">
+                    <h3>Basic Settings</h3>
+                </td>
+            </tr>
+            <tr>
                 <th>
                     <label for="dcoupled_token">Dcoupled Auth Token</label>
                 </th>
@@ -32,6 +37,30 @@
                 <td>
                     <input name="dcoupled_publish_trigger_url" id="dcoupled_publish_trigger_url"
                            value="<?php echo esc_attr( get_option( 'dcoupled_publish_trigger_url' ) ); ?>"
+                           class="regular-text">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h3>URL Settings</h3>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <label for="dcoupled_upload_url">Uploads URL</label>
+                </th>
+                <td>
+                    <input name="dcoupled_upload_url" id="dcoupled_upload_url"
+                           value="<?php echo esc_attr( get_option( 'dcoupled_upload_url' ) ); ?>" class="regular-text">
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <label for="dcoupled_staging_upload_url">Uploads URL (staging)</label>
+                </th>
+                <td>
+                    <input name="dcoupled_staging_upload_url" id="dcoupled_staging_upload_url"
+                           value="<?php echo esc_attr( get_option( 'dcoupled_staging_upload_url' ) ); ?>"
                            class="regular-text">
                 </td>
             </tr>
