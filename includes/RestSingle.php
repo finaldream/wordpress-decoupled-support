@@ -1,10 +1,35 @@
 <?php
 /**
  * Rest Single post/page query by permalink
- *
- * @author Louis Thai <louis.thai@finaldream.de>
- * @since 26.07.2017
  */
+
+/**
+ * TODO: validate parent slugs as well
+ * @param $slug
+ * @return null
+ */
+function findPostBySlug($slug)
+{
+
+    $name = trim($slug, '/');
+
+    if (strpos($name, '/')) {
+        $parts = explode('/', $name);
+        $name = array_pop($parts);
+    }
+
+    $posts = get_posts([
+        'name' => $name,
+        'post_type' => 'any',
+        'post_status' => 'published',
+    ]);
+
+    if (count($posts) > 0) {
+        return $posts[0];
+    }
+
+    return null;
+}
 
 /**
  * Class RestSingle
@@ -42,6 +67,7 @@ class RestSingle
             return new WP_Error('REST_INVALID', 'Please provide a valid permalink', ['status' => 400]);
         }
 
+        // try finding a post "the official" way
         if ($q === '/' && get_option('show_on_front') === 'page') {
             $postId = get_option( 'page_on_front' );
             $template = 'index';
@@ -51,6 +77,11 @@ class RestSingle
         }
 
         $post = get_post($postId);
+        
+        // alternately, try finding the post by it's slug
+        if (!$post) {
+            $post = findPostBySlug($q);
+        }
 
         if (!$post) {
             return new WP_Error( 'REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $q]);
