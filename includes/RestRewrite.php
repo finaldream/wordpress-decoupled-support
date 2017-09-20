@@ -18,20 +18,7 @@ class RestRewrite {
 	 * RestRewrite constructor.
 	 */
 	public function __construct() {
-		$this->uploadDomain = $this->getUploadDomain();
-	}
-
-	/**
-	 * Get upload URL
-	 *
-	 * @return string
-	 */
-	public function getUploadDomain() {
-		if ( defined( 'WP_ENV' ) && in_array( WP_ENV, [ 'dev', 'stage', 'local' ] ) ) {
-			return get_option( 'dcoupled_staging_upload_url', '' );
-		}
-
-		return get_option( 'dcoupled_upload_url', '' );
+		$this->uploadDomain = get_option( 'dcoupled_upload_url', '' );
 	}
 
 	/**

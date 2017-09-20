@@ -50,12 +50,6 @@ class RestAdmin {
 			'dcoupled_upload_url',
 			[$this, 'sanitize']
 		);
-
-		register_setting(
-			'dcoupled-settings-group',
-			'dcoupled_staging_upload_url',
-			[$this, 'sanitize']
-		);
 	}
 
 	/**

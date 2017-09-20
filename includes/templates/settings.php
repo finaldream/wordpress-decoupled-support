@@ -54,16 +54,6 @@
                            value="<?php echo esc_attr( get_option( 'dcoupled_upload_url' ) ); ?>" class="regular-text">
                 </td>
             </tr>
-            <tr>
-                <th>
-                    <label for="dcoupled_staging_upload_url">Uploads URL (staging)</label>
-                </th>
-                <td>
-                    <input name="dcoupled_staging_upload_url" id="dcoupled_staging_upload_url"
-                           value="<?php echo esc_attr( get_option( 'dcoupled_staging_upload_url' ) ); ?>"
-                           class="regular-text">
-                </td>
-            </tr>
             </tbody>
         </table>
         <p class="submit">
