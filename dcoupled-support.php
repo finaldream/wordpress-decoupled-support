@@ -21,6 +21,7 @@ include_once 'includes/RestWPML.php';
 include_once 'includes/RestAdmin.php';
 include_once 'includes/RestPublishTrigger.php';
 include_once 'includes/RestList.php';
+include_once 'includes/RestRewrite.php';
 
 include_once 'includes/thirdparty/WpmlSupport.php';
 
@@ -32,6 +33,7 @@ function dcoupled_rest_api_init()
     (new RestFields())->registerRestFields();
     (new RestWPML())->registerFilters();
     (new RestList())->registerListRoutes();
+	(new RestRewrite())->rewrite();
 }
 
 function dcoupled_rest_authentication($result)

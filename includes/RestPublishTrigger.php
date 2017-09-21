@@ -47,7 +47,6 @@ class RestPublishTrigger {
 	 *
 	 * @param $post_id
 	 * @param $post
-	 * @param $update
 	 */
 	public function generateOnSave($post_id, $post) {
 
@@ -56,10 +55,14 @@ class RestPublishTrigger {
 		if (!in_array($post->post_type, $postTypes) || $post->post_status !== 'publish')
 			return;
 
-		$this->triggered([
-			'id' => $post_id,
-			'slug' => preg_replace ('/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i', '$2', get_permalink($post_id)),
-		]);
+		try {
+			$this->triggered([
+				'id' => $post_id,
+				'slug' => preg_replace ('/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i', '$2', get_permalink($post_id)),
+			]);
+		} catch (Exception $e) {
+			wp_die($e->getMessage());
+		}
 	}
 
 	/**
@@ -68,6 +71,7 @@ class RestPublishTrigger {
 	 * @param $args
 	 *
 	 * @return mixed
+	 * @throws Exception
 	 */
 	public function triggered($args) {
 		$fields = '';
@@ -85,6 +89,12 @@ class RestPublishTrigger {
 		curl_setopt($ch,CURLOPT_POSTFIELDS, $fields);
 
 		$result = curl_exec($ch);
+
+		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		if($httpCode === 404) {
+			throw new Exception("URL not found $this->url");
+		}
 
 		curl_close($ch);
 

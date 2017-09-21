@@ -45,6 +45,11 @@ class RestAdmin {
 			[$this, 'sanitize']
 		);
 
+		register_setting(
+			'dcoupled-settings-group',
+			'dcoupled_upload_url',
+			[$this, 'sanitize']
+		);
 	}
 
 	/**
