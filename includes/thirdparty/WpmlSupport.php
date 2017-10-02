@@ -1,5 +1,6 @@
 <?php
 
+include_once(__DIR__ . '/../../lib/UrlUtils.php');
 
 class WpmlSupport
 {
@@ -78,10 +79,9 @@ class WpmlSupport
                 continue;
             }
 
-            $translation->permalink = get_permalink($translation->element_id);
             $result[]               = [
                 'ID' => $translation->element_id,
-                'permalink' => get_permalink($translation->element_id),
+                'permalink' => UrlUtils::stripDomain(get_permalink($translation->element_id)),
                 'language' => $translation->language_code,
                 'post_title' => $translation->post_title,
             ];

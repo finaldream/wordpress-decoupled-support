@@ -28,16 +28,18 @@ include_once 'includes/thirdparty/WpmlSupport.php';
 
 function dcoupled_rest_api_init()
 {
+
     (new RestSingle())->registerSingleRoutes();
     (new RestMenus())->registerMenuRoutes();
     (new RestFields())->registerRestFields();
     (new RestWPML())->registerFilters();
     (new RestList())->registerListRoutes();
-	(new RestRewrite())->rewrite();
+    (new RestRewrite())->rewrite();
 }
 
 function dcoupled_rest_authentication($result)
 {
+
     (new RestToken())->protect($result);
 }
 

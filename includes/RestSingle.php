@@ -15,7 +15,7 @@ function findPostBySlug($slug)
 
     if (strpos($name, '/')) {
         $parts = explode('/', $name);
-        $name = array_pop($parts);
+        $name  = array_pop($parts);
     }
 
     $posts = get_posts([
@@ -31,6 +31,7 @@ function findPostBySlug($slug)
     return null;
 }
 
+
 /**
  * Class RestSingle
  */
@@ -39,6 +40,7 @@ class RestSingle
 
     const API_NAMESPACE = 'wp/v2';
 
+
     /**
      * Register menus route.
      * @return void
@@ -46,11 +48,11 @@ class RestSingle
     public function registerSingleRoutes()
     {
 
-        register_rest_route( static::API_NAMESPACE, '/permalink', [
+        register_rest_route(static::API_NAMESPACE, '/permalink', [
             [
-                'methods'  => WP_REST_Server::READABLE,
+                'methods' => WP_REST_Server::READABLE,
                 'callback' => [$this, 'getSingle'],
-                'args'     => [
+                'args' => [
                     'q' => [
                         'default' => false
                     ],
@@ -59,8 +61,10 @@ class RestSingle
         ]);
     }
 
+
     public function getSingle($request)
     {
+
         $q = $request['q'];
 
         if (!is_string($q) || empty($q)) {
@@ -69,22 +73,22 @@ class RestSingle
 
         // try finding a post "the official" way
         if ($q === '/' && get_option('show_on_front') === 'page') {
-            $postId = get_option( 'page_on_front' );
+            $postId   = get_option('page_on_front');
             $template = 'index';
         } else {
             $args['name'] = $q;
-            $postId = url_to_postid($q);
+            $postId       = url_to_postid($q);
         }
 
         $post = get_post($postId);
-        
+
         // alternately, try finding the post by it's slug
         if (!$post) {
             $post = findPostBySlug($q);
         }
 
         if (!$post) {
-            return new WP_Error( 'REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $q]);
+            return new WP_Error('REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $q]);
         }
 
         $template = (!empty($template)) ? $template : $post->post_type;
@@ -95,15 +99,17 @@ class RestSingle
         return rest_ensure_response($serialized);
     }
 
+
     private function serialize($post, $request, $template)
     {
+
         $controller = new WP_REST_Posts_Controller($post->post_type);
 
         $prepared = $controller->prepare_item_for_response($post, $request);
 
         return $response = [
-        'result' => [$prepared->data],
-        'meta' => [
+            'result' => [$prepared->data],
+            'meta' => [
                 'type' => $post->post_type,
                 'view_mode' => 'single',
                 'template' => $template,
