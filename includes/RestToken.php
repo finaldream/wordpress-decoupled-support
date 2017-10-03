@@ -22,7 +22,8 @@ class RestToken
             return $result;
         }
 
-        $headers = getallheaders();
+        // Headers might arrive in different case than expected
+        $headers = array_change_key_case(getallheaders(), CASE_LOWER);
 
         if (!isset($headers['dcoupled-token'])) {
             $this->error = new \WP_Error('rest_authentication_error', 'Access denied.');
