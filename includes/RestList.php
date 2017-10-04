@@ -19,7 +19,7 @@ class RestList
      * Register menus route.
      * @return void
      */
-    public function registerListRoutes()
+    public function registerRoutes()
     {
 
         register_rest_route(

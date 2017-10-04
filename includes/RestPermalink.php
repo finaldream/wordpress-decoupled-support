@@ -35,7 +35,7 @@ function findPostBySlug($slug)
 /**
  * Class RestSingle
  */
-class RestSingle
+class RestPermalink
 {
 
     const API_NAMESPACE = 'wp/v2';
@@ -45,13 +45,13 @@ class RestSingle
      * Register menus route.
      * @return void
      */
-    public function registerSingleRoutes()
+    public function registerRoutes()
     {
 
         register_rest_route(static::API_NAMESPACE, '/permalink', [
             [
                 'methods' => WP_REST_Server::READABLE,
-                'callback' => [$this, 'getSingle'],
+                'callback' => [$this, 'getPermalink'],
                 'args' => [
                     'q' => [
                         'default' => false
@@ -62,7 +62,7 @@ class RestSingle
     }
 
 
-    public function getSingle($request)
+    public function getPermalink($request)
     {
 
         $q = $request['q'];
@@ -74,7 +74,6 @@ class RestSingle
         // try finding a post "the official" way
         if ($q === '/' && get_option('show_on_front') === 'page') {
             $postId   = get_option('page_on_front');
-            $template = 'index';
         } else {
             $args['name'] = $q;
             $postId       = url_to_postid($q);
@@ -91,21 +90,31 @@ class RestSingle
             return new WP_Error('REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $q]);
         }
 
-        $template = (!empty($template)) ? $template : $post->post_type;
 
-
-        $serialized = $this->serialize($post, $request, $template);
+        $serialized = $this->serialize($post, $request);
 
         return rest_ensure_response($serialized);
     }
 
+    function getTemplate($post) {
 
-    private function serialize($post, $request, $template)
+
+        $isHome = 'page' == get_option('show_on_front') &&  $post->ID == get_option('page_on_front');
+
+        $template = ($isHome) ? 'index' : $post->post_type;
+
+        return apply_filters('rest_permalink_get_template', $template, $post);
+
+    }
+
+
+    private function serialize($post, $request)
     {
 
         $controller = new WP_REST_Posts_Controller($post->post_type);
 
         $prepared = $controller->prepare_item_for_response($post, $request);
+        $template = $prepared->data['template'] ?: '';
 
         return $response = [
             'result' => [$prepared->data],

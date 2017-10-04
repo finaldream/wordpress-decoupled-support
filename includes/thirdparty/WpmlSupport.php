@@ -20,6 +20,7 @@ class WpmlSupport
         }
         add_filter('rest_list_get_post_data', [$this, 'sitepressGetPostDataFilter']);
         add_filter('rest_list_prepare_response', [$this, 'sitepressPrepareResponse']);
+        add_filter('rest_permalink_get_template', [$this, 'sitepressPermalinkgetTemplate'], 1, 2);
 
         // Removes WPML-filters, which seem modify the permalinks based on the current (default) language
         remove_all_filters('page_link');
@@ -61,6 +62,23 @@ class WpmlSupport
         $response['meta']['languages'] = $languages;
 
         return $response;
+    }
+
+    public function sitepressPermalinkgetTemplate($template, $post) {
+
+        // Check the default translation for being set as 'page_for_posts".
+        if ('page' == get_option('show_on_front') && $template != 'index') {
+
+            $defaultLanguage = wpml_get_default_language();
+            $originalId = wpml_object_id_filter($post->ID, $post->post_type, true, $defaultLanguage);
+
+            if (get_option('page_on_front') == $originalId) {
+                return 'index';
+            }
+        }
+
+        return $template;
+
     }
 
 

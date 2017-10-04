@@ -18,7 +18,7 @@ class RestMenus
      * Register menus route.
      * @return void
      */
-    public function registerMenuRoutes()
+    public function registerRoutes()
     {
 
         register_rest_route(static::API_NAMESPACE, '/menus', [

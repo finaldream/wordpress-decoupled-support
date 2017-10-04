@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 include_once 'includes/RestToken.php';
 include_once 'includes/RestFields.php';
 include_once 'includes/RestMenus.php';
-include_once 'includes/RestSingle.php';
+include_once 'includes/RestPermalink.php';
 include_once 'includes/RestWPML.php';
 include_once 'includes/RestAdmin.php';
 include_once 'includes/RestPublishTrigger.php';
@@ -29,11 +29,11 @@ include_once 'includes/thirdparty/WpmlSupport.php';
 function dcoupled_rest_api_init()
 {
 
-    (new RestSingle())->registerSingleRoutes();
-    (new RestMenus())->registerMenuRoutes();
+    (new RestPermalink())->registerRoutes();
+    (new RestMenus())->registerRoutes();
+    (new RestList())->registerRoutes();
     (new RestFields())->registerRestFields();
     (new RestWPML())->registerFilters();
-    (new RestList())->registerListRoutes();
     (new RestRewrite())->rewrite();
 }
 

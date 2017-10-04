@@ -44,25 +44,11 @@ class RestFields
         register_rest_field($this->objectTypes, 'template', [
             'get_callback' => function ($object) {
 
-                $template  = $object['type'];
-                $related[] = get_option('page_on_front');
+                $isHome = 'page' == get_option('show_on_front') &&  $object['id'] == get_option('page_on_front');
+                $template = ($isHome) ? 'index' : $object['type'];
 
-                if (!empty($related)) {
-                    if (function_exists('wpml_active_languages')) {
-                        $languages = apply_filters('wpml_active_languages', []);
+                return apply_filters('rest_permalink_get_template', $template, get_post($object['id']));
 
-                        $related = array_values(array_map(function ($language) use ($related) {
-
-                            return apply_filters('wpml_object_id', $related[0], 'page', false, $language['language_code']);
-                        }, $languages));
-                    }
-                }
-
-                if (in_array($object['id'], $related)) {
-                    $template = 'index';
-                }
-
-                return $template;
             },
             'update_callback' => null,
             'schema' => [
