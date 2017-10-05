@@ -21,9 +21,24 @@ class WpmlSupport
         add_filter('rest_list_get_post_data', [$this, 'sitepressGetPostDataFilter']);
         add_filter('rest_list_prepare_response', [$this, 'sitepressPrepareResponse']);
         add_filter('rest_permalink_get_template', [$this, 'sitepressPermalinkgetTemplate'], 1, 2);
+        add_filter('rest_menus_get_active_languages', [$this, 'getActiveLanguagesFilter'], 10, 1);
 
         // Removes WPML-filters, which seem modify the permalinks based on the current (default) language
         remove_all_filters('page_link');
+    }
+
+    public function getActiveLanguagesFilter($languages) {
+
+        $activeLanguages = wpml_get_active_languages_filter('', 'skip_missing=1');
+
+        $result = [];
+
+        foreach ($activeLanguages as $language) {
+            $result[] = $language['language_code'];
+        }
+
+        return $result;
+
     }
 
 

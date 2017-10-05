@@ -28,6 +28,20 @@ class RestMenus
             ]
         ]);
 
+        add_filter('rest_menus_get_active_languages', [$this, 'getDefaultLanguageFilter'], 1);
+
+    }
+
+    public function getDefaultLanguageFilter($languages) {
+
+        $locale = get_locale();
+
+        if (strpos($locale, '_') === false) {
+            return $locale;
+        }
+
+        return [explode('_', $locale)[0]];
+
     }
 
 
@@ -43,35 +57,64 @@ class RestMenus
         $locations       = get_nav_menu_locations();
         $registeredMenus = get_registered_nav_menus();
 
-        $rest_menus = [
-            'result' => [],
-        ];
-
         if (isset($lang)) {
             do_action('wpml_switch_language', $lang);
         }
 
-        foreach ($registeredMenus as $locationId => $label) {
-            if (!isset($locations[$locationId])) {
+        if (empty($lang)) {
+            $languages = $this->getDefaultLanguageFilter('');
+        } else if ($lang == 'all') {
+            $languages = apply_filters('rest_menus_get_active_languages', '');
+        } else {
+            $languages = explode(',', $lang);
+        }
+
+        $menus = [];
+
+        foreach ($registeredMenus as $locationName => $label) {
+            if (!isset($locations[$locationName])) {
                 continue;
             }
 
-            $menu = wp_get_nav_menu_object($locations[$locationId]);
+            foreach ($languages as $language) {
+                $menu = $this->getMenu($locations[$locationName], $language);
 
-            $rest_menus['result']['menus'][$locationId]                = [];
-            $rest_menus['result']['menus'][$locationId]['ID']          = $menu->term_id;
-            $rest_menus['result']['menus'][$locationId]['name']        = $menu->name;
-            $rest_menus['result']['menus'][$locationId]['slug']        = $menu->slug;
-            $rest_menus['result']['menus'][$locationId]['description'] = $menu->description;
-            $rest_menus['result']['menus'][$locationId]['count']       = $menu->count;
+                if (empty($menu['count'])) {
+                    continue;
+                }
 
-            $rest_menus['result']['menus'][$locationId]['items'] = $this->getChildren($menu->slug);
+                $menus[$locationName][$language] = $menu;
+            }
 
         }
+
+        $rest_menus = [
+            'result' => [
+                'menus' => $menus,
+            ],
+        ];
 
         return rest_ensure_response($rest_menus);
     }
 
+    function getMenu($locationId, $language) {
+
+        if (!empty($language)) {
+            do_action('wpml_switch_language', $language);
+        }
+
+        $menu = wp_get_nav_menu_object($locationId);
+
+        return [
+            'ID'          => $menu->term_id,
+            'name'        => $menu->name,
+            'slug'        => $menu->slug,
+            'description' => $menu->description,
+            'count'       => $menu->count,
+            'items'       => $this->getChildren($menu->slug),
+        ];
+
+    }
 
     /**
      * Get all items of a single menu
