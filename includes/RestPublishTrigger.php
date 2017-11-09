@@ -4,113 +4,98 @@
  */
 
 
-class RestPublishTrigger
-{
+class RestPublishTrigger {
 
-    public $url = '';
-
-
-    /**
-     * RestPublishTrigger constructor.
-     */
-    public function __construct()
-    {
-
-        $this->url = get_option('dcoupled_publish_trigger_url', '');
-    }
+	public $url = '';
 
 
-    /**
-     * Register WP actions
-     */
-    public function register()
-    {
+	/**
+	 * RestPublishTrigger constructor.
+	 */
+	public function __construct() {
 
-        if (empty($this->url))
-            return;
-
-        add_action('wp_ajax_dcoupled_generate_all', [$this, 'generateAll']);
-        add_action('save_post', [$this, 'generateOnSave'], 10, 2);
-    }
+		$this->url = get_option( 'dcoupled_publish_trigger_url', '' );
+	}
 
 
-    /**
-     * Generate all posts
-     */
-    public function generateAll()
-    {
+	/**
+	 * Register WP actions
+	 */
+	public function register() {
 
-        try {
-            $this->triggered([
-                'all' => true
-            ]);
-            wp_send_json_success('Generating...');
-        } catch (Exception $e) {
-            wp_send_json_error($e->getMessage());
-        }
-    }
+		if ( empty( $this->url ) ) {
+			return;
+		}
+
+		add_action( 'wp_ajax_dcoupled_generate_all', [ $this, 'generateAll' ] );
+		add_action( 'save_post', [ $this, 'generateOnSave' ], 10, 2 );
+	}
 
 
-    /**
-     * Generate single post on-save
-     *
-     * @param $post_id
-     * @param $post
-     */
-    public function generateOnSave($post_id, $post)
-    {
+	/**
+	 * Generate all posts
+	 */
+	public function generateAll() {
 
-        $postTypes = get_post_types(['show_in_rest' => true]);
-
-        if (!in_array($post->post_type, $postTypes) || $post->post_status !== 'publish')
-            return;
-
-        try {
-            $this->triggered([
-                'id' => $post_id,
-                'slug' => preg_replace('/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i', '$2', get_permalink($post_id)),
-            ]);
-        } catch (Exception $e) {
-            wp_die($e->getMessage());
-        }
-    }
+		try {
+			$this->triggered( [
+				'action' => 'flush'
+			] );
+			wp_send_json_success( 'Generating...' );
+		} catch ( Exception $e ) {
+			wp_send_json_error( $e->getMessage() );
+		}
+	}
 
 
-    /**
-     * Trigger webhook
-     *
-     * @param $args
-     *
-     * @return mixed
-     * @throws Exception
-     */
-    public function triggered($args)
-    {
+	/**
+	 * Generate single post on-save
+	 *
+	 * @param $post_id
+	 * @param $post
+	 */
+	public function generateOnSave( $post_id, $post ) {
 
-        $fields = '';
+		$postTypes = get_post_types( [ 'show_in_rest' => true ] );
 
-        foreach ($args as $key => $value) {
-            $fields .= sprintf('%s=%s&', $key, $value);
-        }
+		if ( ! in_array( $post->post_type, $postTypes ) || $post->post_status !== 'publish' ) {
+			return;
+		}
 
-        rtrim($fields, '&');
+		try {
+			$this->triggered( [
+				'action' => 'destroy',
+				'params' => [
+					'id'   => $post_id,
+					'type' => 'permalink',
+					'slug' => preg_replace( '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i', '$2', get_permalink( $post_id ) ),
+				]
+			] );
+		} catch ( Exception $e ) {
+			wp_die( $e->getMessage() );
+		}
+	}
 
-        $ch = curl_init();
+	/**
+	 * Trigger webhook
+	 *
+	 * @param $args
+	 *
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function triggered( $args ) {
 
-        curl_setopt($ch, CURLOPT_URL, $this->url);
-        curl_setopt($ch, CURLOPT_POST, count($args));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+		$args = ['cache' => http_build_query($args, '', '&')];
 
-        $result = curl_exec($ch);
+		$response = wp_remote_post( $this->url, [
+			'headers' => $args,
+		] );
 
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			throw new Exception( $error_message );
+		}
 
-        if ($httpCode === 404) {
-            throw new Exception("URL not found $this->url");
-        }
-
-        curl_close($ch);
-
-        return $result;
-    }
+	}
 }
