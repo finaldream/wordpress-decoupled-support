@@ -238,14 +238,13 @@ class RestMenus
     {
 
         $item        = (array) $menu_item;
-        $domainRegex = '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i';
 
         $menu_item = [
             'id' => abs($item['ID']),
             'order' => (int) $item['menu_order'],
             'parent' => abs($item['menu_item_parent']),
             'title' => $item['title'],
-            'url' => preg_replace($domainRegex, '$2', '' . $item['url']),
+            'url' => UrlUtils::getInstance()->replaceDomain($item['url']),
             'attr' => $item['attr_title'],
             'target' => $item['target'],
             'classes' => implode(' ', apply_filters('nav_menu_css_class', array_filter($item['classes']), $item)),

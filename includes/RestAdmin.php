@@ -52,6 +52,12 @@ class RestAdmin
             [$this, 'sanitize']
         );
 
+	    register_setting(
+		    'dcoupled-settings-group',
+		    'dcoupled_client_domain',
+		    [$this, 'sanitize']
+	    );
+
         register_setting(
             'dcoupled-settings-group',
             'dcoupled_upload_url',
@@ -65,11 +71,6 @@ class RestAdmin
      */
     public function settingPage()
     {
-
-        if (isset($_REQUEST['generate_all'])) {
-            var_dump($_REQUEST['generate_all']);
-        }
-
         include_once 'templates/settings.php';
     }
 
