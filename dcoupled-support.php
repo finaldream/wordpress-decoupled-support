@@ -13,6 +13,8 @@ if (!defined('ABSPATH')) {
     exit();
 }
 
+include_once 'lib/UrlUtils.php';
+
 include_once 'includes/RestToken.php';
 include_once 'includes/RestFields.php';
 include_once 'includes/RestMenus.php';

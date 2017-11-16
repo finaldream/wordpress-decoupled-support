@@ -12,5 +12,10 @@
       "name": "Louis Thai",
       "email": "louis.thai@finaldream.de"
     }
-  ]
+  ],
+  "autoload": {
+    "psr-4": {
+      "": ""
+    }
+  }
 }

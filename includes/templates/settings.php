@@ -47,6 +47,15 @@
             </tr>
             <tr>
                 <th>
+                    <label for="dcoupled_upload_url">Dcoupled Client Domain</label>
+                </th>
+                <td>
+                    <input name="dcoupled_client_domain" id="dcoupled_client_domain"
+                           value="<?php echo esc_attr( get_option( 'dcoupled_client_domain' ) ); ?>" class="regular-text">
+                </td>
+            </tr>
+            <tr>
+                <th>
                     <label for="dcoupled_upload_url">Uploads URL</label>
                 </th>
                 <td>

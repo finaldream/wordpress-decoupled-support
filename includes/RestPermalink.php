@@ -18,14 +18,15 @@ function findPostBySlug($slug)
         $name  = array_pop($parts);
     }
 
-    $posts = get_posts([
-        'name' => $name,
-        'post_type' => 'any',
-        'post_status' => 'published',
+    $query = new WP_Query([
+    	'name' => $name,
+	    'post_type' => 'any',
+	    'post_status' => ['publish', 'pending', 'draft', 'auto-draft', 'future', 'inherit'],
+	    'posts_per_page' => 1,
     ]);
 
-    if (count($posts) > 0) {
-        return $posts[0];
+    if (!empty($query->posts)) {
+	    return array_pop($query->posts);
     }
 
     return null;
@@ -39,7 +40,6 @@ class RestPermalink
 {
 
     const API_NAMESPACE = 'wp/v2';
-
 
     /**
      * Register menus route.
@@ -61,13 +61,14 @@ class RestPermalink
         ]);
     }
 
-
     public function getPermalink($request)
     {
 
         $q = $request['q'];
+	    $preview = $request['preview'];
+	    $previewToken = $request['token'];
 
-        if (!is_string($q) || empty($q)) {
+	    if (!is_string($q) || empty($q)) {
             return new WP_Error('REST_INVALID', 'Please provide a valid permalink', ['status' => 400]);
         }
 
@@ -86,10 +87,19 @@ class RestPermalink
             $post = findPostBySlug($q);
         }
 
-        if (!$post) {
+	    $validPreview = ($post && !empty($preview) && !empty($previewToken) && (base64_decode( $previewToken) === 'dcoupled-preview-token_'.$post->ID));
+
+	    if (!$post || ($post && $post->post_status !== 'publish' && !$validPreview)) {
             return new WP_Error('REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $q]);
         }
 
+	    if ($validPreview) {
+	        $preview = wp_get_post_autosave( $post->ID );
+
+	        if ( is_object( $preview ) ) {
+		        $post->ID = $preview->ID;
+	        }
+        }
 
         $serialized = $this->serialize($post, $request);
 
@@ -106,7 +116,6 @@ class RestPermalink
         return apply_filters('rest_permalink_get_template', $template, $post);
 
     }
-
 
     private function serialize($post, $request)
     {

@@ -5,7 +5,7 @@
  * @see https://developer.wordpress.org/rest-api/extending-the-rest-api/modifying-responses/
  */
 
-include_once(__DIR__ . '/../lib/UrlUtils.php');
+use DcoupledSupport\UrlUtils;
 
 /**
  * Class RestFields
@@ -13,9 +13,6 @@ include_once(__DIR__ . '/../lib/UrlUtils.php');
 class RestFields
 {
     public $objectTypes;
-
-    public $domainRegex = '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i';
-
 
     /**
      * Add rest fields
@@ -67,8 +64,7 @@ class RestFields
 
         register_rest_field($this->objectTypes, 'permalink', [
             'get_callback' => function ($object) {
-
-                return preg_replace($this->domainRegex, '$2', '' . get_permalink());
+                return UrlUtils::stripAllDomain('' . get_permalink());
             },
             'update_callback' => null,
             'schema' => [
@@ -221,7 +217,7 @@ class RestFields
                         'code' => $language['language_code'],
                         'id' => $post->ID,
                         'post_title' => $post->post_title,
-                        'permalink' => UrlUtils::stripDomain(get_permalink($post->ID)),
+                        'permalink' => UrlUtils::stripAllDomain(get_permalink($post->ID)),
                     ];
                 }
 
