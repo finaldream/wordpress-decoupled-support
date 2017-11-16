@@ -6,6 +6,9 @@
  * @since  02.10.2017
  */
 
+namespace DcoupledSupport;
+
+
 class UrlUtils {
 
 	/**
