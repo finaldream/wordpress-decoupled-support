@@ -5,6 +5,8 @@
  * @see https://developer.wordpress.org/rest-api/extending-the-rest-api/modifying-responses/
  */
 
+use DcoupledSupport\UrlUtils;
+
 /**
  * Class RestFields
  */

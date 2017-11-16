@@ -1,5 +1,7 @@
 <?php
 
+use DcoupledSupport\UrlUtils;
+
 class WpmlSupport
 {
 
