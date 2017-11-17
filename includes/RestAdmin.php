@@ -17,7 +17,15 @@ class RestAdmin
         add_action('admin_menu', [$this, 'menu']);
         add_action('admin_init', [$this, 'settings']);
         add_filter('preview_post_link', [$this, 'previewPostLink'], 100, 2);
+		add_filter('get_sample_permalink', [$this, 'samplePermalink'], 100, 5);
+    }
 
+    public function samplePermalink($permalink, $postId, $title, $name, $post) {
+
+    	return [
+    		$this->previewPostLink($permalink, $post),
+		    ''
+	    ];
     }
 
 	/**
@@ -31,14 +39,11 @@ class RestAdmin
     public function previewPostLink($original, $post) {
 		$clientDomain = get_option('dcoupled_client_domain', false);
 
-
 		if (!empty($clientDomain)) {
-			list($permalink, $post_name) = get_sample_permalink($post);
-			$link = str_replace( array( '%pagename%', '%postname%' ), $post->post_name, $permalink );
 
-			return sprintf('%s%s?preview=true&token=%s',
+			return sprintf('%s/preview/?preview_id=%s&token=%s',
 				$clientDomain,
-				UrlUtils::stripAllDomain($link),
+				$post->ID,
 				base64_encode( 'dcoupled-preview-token_'.$post->ID )
 			);
 		}

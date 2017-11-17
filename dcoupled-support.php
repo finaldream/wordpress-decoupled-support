@@ -19,6 +19,7 @@ include_once 'includes/RestToken.php';
 include_once 'includes/RestFields.php';
 include_once 'includes/RestMenus.php';
 include_once 'includes/RestPermalink.php';
+include_once 'includes/RestPreview.php';
 include_once 'includes/RestWPML.php';
 include_once 'includes/RestAdmin.php';
 include_once 'includes/RestPublishTrigger.php';
@@ -32,6 +33,7 @@ function dcoupled_rest_api_init()
 {
 
     (new RestPermalink())->registerRoutes();
+	(new RestPreview())->registerRoutes();
     (new RestMenus())->registerRoutes();
     (new RestList())->registerRoutes();
     (new RestFields())->registerRestFields();
