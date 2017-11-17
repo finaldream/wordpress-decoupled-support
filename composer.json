@@ -1,6 +1,7 @@
 {
   "name": "finaldream/wordpress-dcoupled-support",
   "description": "Dcoupled support for Wordpress",
+  "version": "1.5.0",
   "type": "wordpress-plugin",
   "license": "MIT",
   "authors": [
