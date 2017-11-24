@@ -50,7 +50,7 @@ class RestList
         ];
 
         $query = "
-            SELECT ID, post_title, post_name, post_type 
+            SELECT ID, post_title, post_name, post_type, post_date_gmt, post_modified_gmt
             FROM $wpdb->posts 
             WHERE post_status = 'publish' AND post_type IN (\"$sqlTypes\")
         ";
