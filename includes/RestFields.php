@@ -29,6 +29,7 @@ class RestFields
         $this->registerACFField();
         $this->registerWPMLField();
         $this->registerTemplateField();
+        $this->registerPostMetaField();
     }
 
 
@@ -233,4 +234,24 @@ class RestFields
             ],
         ]);
     }
+
+    /**
+     * Add Post classes to rest fields
+     */
+    public function registerPostMetaField()
+    {
+
+        register_rest_field($this->objectTypes, 'meta', [
+            'get_callback' => function ($object) {
+
+                return get_post_meta($object['id']);
+            },
+            'update_callback' => null,
+            'schema' => [
+                'description' => __('Post Meta'),
+                'type' => 'array'
+            ],
+        ]);
+    }
+
 }
