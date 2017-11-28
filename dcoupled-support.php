@@ -22,12 +22,25 @@ include_once 'includes/RestPermalink.php';
 include_once 'includes/RestPreview.php';
 include_once 'includes/RestWPML.php';
 include_once 'includes/RestAdmin.php';
-include_once 'includes/RestPublishTrigger.php';
 include_once 'includes/RestList.php';
 include_once 'includes/RestRewrite.php';
+include_once 'includes/CacheInvalidation.php';
 
 include_once 'includes/thirdparty/WpmlSupport.php';
 
+function dcoupled_admin_scripts( $hook ) {
+
+	$allows = ['edit.php', 'post.php', 'settings_page_dcoupled-support-settings'];
+
+	if ( ! in_array( $hook, $allows )) {
+		return;
+	}
+
+	wp_enqueue_script( 'dcoupled_admin', plugins_url('assets/js/dcoupled-admin.js', __FILE__) );
+	wp_enqueue_style( 'dcoupled_admin', plugins_url('assets/css/dcoupled-admin.css', __FILE__) );
+}
+
+add_action( 'admin_enqueue_scripts', 'dcoupled_admin_scripts' );
 
 function dcoupled_rest_api_init()
 {
@@ -54,7 +67,7 @@ add_filter('rest_authentication_errors', 'dcoupled_rest_authentication');
 add_action('init', function () {
 
     (new RestAdmin())->addSettings();
-    (new RestPublishTrigger())->register();
+	(new CacheInvalidation())->register();
 
     /* Initialize third-parties */
     if (WpmlSupport::isAvailable()) {

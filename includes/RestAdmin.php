@@ -80,7 +80,7 @@ class RestAdmin
 
         register_setting(
             'dcoupled-settings-group',
-            'dcoupled_publish_trigger_url',
+            'dcoupled_cache_invalidation_url',
             [$this, 'sanitize']
         );
 
