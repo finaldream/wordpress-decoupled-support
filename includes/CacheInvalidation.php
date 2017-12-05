@@ -85,13 +85,18 @@ class CacheInvalidation {
 		}
 
 		try {
+
+		    $params = [
+			    'id'   => $post_id,
+			    'type' => 'permalink',
+			    'slug' => preg_replace( '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i', '$2', get_permalink( $post_id ) ),
+		    ];
+
+			$params = apply_filters('dcoupled_cache_invalidation_params', $post, $params);
+
 			$this->triggered( [
 				'action' => 'destroy',
-				'params' => [
-					'id'   => $post_id,
-					'type' => 'permalink',
-					'slug' => preg_replace( '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i', '$2', get_permalink( $post_id ) ),
-				]
+				'params' => $params,
 			] );
 
 			if ( $isAjax ) {
