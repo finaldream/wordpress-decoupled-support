@@ -105,10 +105,13 @@ class RestFields
         register_rest_field($this->objectTypes, 'thumbnail', [
             'get_callback' => function ($object) {
 
-                $thumbnail = get_post(get_post_thumbnail_id());
+        	    $object = get_post($object['id']);
+        	    $post = (!has_post_thumbnail($object) && $object->post_type === 'revision') ? get_post($object->post_parent) : $object ;
+
+                $thumbnail = get_post(get_post_thumbnail_id($post));
 
                 return [
-                    'url' => get_the_post_thumbnail_url(),
+                    'url' => get_the_post_thumbnail_url($post),
                     'description' => $thumbnail->post_content,
                     'copyright' => $thumbnail->post_excerpt,
                 ];
