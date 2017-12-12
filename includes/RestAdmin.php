@@ -18,14 +18,66 @@ class RestAdmin
         add_action('admin_init', [$this, 'settings']);
         add_filter('preview_post_link', [$this, 'previewPostLink'], 100, 2);
 		add_filter('get_sample_permalink', [$this, 'samplePermalink'], 100, 5);
+		add_filter('get_sample_permalink_html', [$this, 'samplePermalinkHTML'], 100, 1);
+		add_filter('post_row_actions', [$this, 'rowActions'], 100, 1);
+	    add_filter('page_row_actions', [$this, 'rowActions'], 100, 1);
+
     }
 
+	/**
+	 * Override sample permalink
+	 *
+	 * @param $permalink
+	 * @param $postId
+	 * @param $title
+	 * @param $name
+	 * @param $post
+	 *
+	 * @return array
+	 */
     public function samplePermalink($permalink, $postId, $title, $name, $post) {
 
     	return [
     		$this->previewPostLink($permalink, $post),
 		    ''
 	    ];
+    }
+
+	/**
+	 * Replace permalink on post editor
+	 *
+	 * @param $return
+	 *
+	 * @return mixed
+	 */
+    public function samplePermalinkHTML($return) {
+
+	    $clientDomain = get_option('dcoupled_client_domain', false);
+
+	    if (!empty($clientDomain)) {
+		    $return = UrlUtils::getInstance()->replaceDomain($return);
+	    }
+
+	    return $return;
+
+    }
+
+	/**
+	 * Replace view link on Post/Page listing table
+	 *
+	 * @param $actions
+	 *
+	 * @return mixed
+	 */
+    public function rowActions($actions) {
+
+	    $clientDomain = get_option('dcoupled_client_domain', false);
+
+	    if (!empty($clientDomain) && isset($actions['view'])) {
+		    $actions['view'] = UrlUtils::getInstance()->replaceDomain($actions['view']);
+	    }
+
+	    return $actions;
     }
 
 	/**
