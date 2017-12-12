@@ -158,10 +158,9 @@ class CacheInvalidation {
 	 */
 	public function triggered( $args ) {
 
-		$args = [ 'cache' => http_build_query( $args, '', '&' ) ];
-
 		$response = wp_remote_post( $this->url, [
-			'headers' => $args,
+		    'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
+			'body'    => json_encode([ 'cache' => $args ]),
 		] );
 
 		if ( is_wp_error( $response ) ) {
