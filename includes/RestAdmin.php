@@ -37,10 +37,13 @@ class RestAdmin
 	 */
     public function samplePermalink($permalink, $postId, $title, $name, $post) {
 
-    	return [
-    		$this->previewPostLink($permalink, $post),
-		    ''
+	    $permalink = array_shift($permalink);
+
+	    return [
+		    $this->previewPostLink($permalink, $post),
+		    $post->post_name
 	    ];
+
     }
 
 	/**
