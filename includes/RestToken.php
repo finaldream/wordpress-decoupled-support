@@ -25,9 +25,16 @@ class RestToken
         // Headers might arrive in different case than expected
         $headers = array_change_key_case(getallheaders(), CASE_LOWER);
 
-        if (!isset($headers['dcoupled-token'])) {
+        $headerToken = null;
+        if (isset($headers['dcoupled-token']) {
+            $headerToken = $headers['dcoupled-token'];
+        } else if (isset($headers['decoupled-token']) {
+            $headerToken = $headers['decoupled-token'];
+        }
+
+        if ($headerToken == null) {
             $this->error = new \WP_Error('rest_authentication_error', 'Access denied.');
-        } elseif ($headers['dcoupled-token'] !== $token) {
+        } elseif ($headerToken !== $token) {
             $this->error = new \WP_Error('rest_authentication_error', 'Invalid token.');
         }
 
