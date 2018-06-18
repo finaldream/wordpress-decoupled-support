@@ -26,9 +26,9 @@ class RestToken
         $headers = array_change_key_case(getallheaders(), CASE_LOWER);
 
         $headerToken = null;
-        if (isset($headers['dcoupled-token']) {
+        if (isset($headers['dcoupled-token'])) {
             $headerToken = $headers['dcoupled-token'];
-        } else if (isset($headers['decoupled-token']) {
+        } else if (isset($headers['decoupled-token'])) {
             $headerToken = $headers['decoupled-token'];
         }
 
