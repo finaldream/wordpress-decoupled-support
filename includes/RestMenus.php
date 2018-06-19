@@ -105,6 +105,10 @@ class RestMenus
         }
 
         $menu = wp_get_nav_menu_object($locationId);
+        
+        if ($menu == false) {
+            return [];
+        }
 
         return [
             'ID'          => $menu->term_id,
