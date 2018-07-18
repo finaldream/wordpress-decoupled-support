@@ -78,9 +78,9 @@ class UrlUtils {
 	 */
 	public function replaceDomain( $string, $newDomain = false ) {
 
-		$newDomain = ($newDomain) ? $newDomain: get_option('dcoupled_client_domain', '');
+		$newDomain = ($newDomain) ? $newDomain : get_option('dcoupled_client_domain', '');
 
-		return preg_replace( $this->domainPattern, $newDomain, $string );
+		return preg_replace( $this->domainPattern, untrailingslashit($newDomain), $string );
 	}
 
 }

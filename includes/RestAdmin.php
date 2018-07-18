@@ -53,15 +53,15 @@ class RestAdmin
 	 *
 	 * @return mixed
 	 */
-    public function samplePermalinkHTML($return) {
+    public function samplePermalinkHTML($link) {
 
 	    $clientDomain = get_option('dcoupled_client_domain', false);
 
-	    if (!empty($clientDomain)) {
-		    $return = UrlUtils::getInstance()->replaceDomain($return);
+	    if (!empty($clientDomain) && strpos($link, $clientDomain) === FALSE) {
+            $link = UrlUtils::getInstance()->replaceDomain($link);
 	    }
 
-	    return $return;
+	    return $link;
 
     }
 
@@ -97,7 +97,7 @@ class RestAdmin
 		if (!empty($clientDomain)) {
 
 			return sprintf('%s/preview/?preview_id=%s&token=%s',
-				$clientDomain,
+                untrailingslashit($clientDomain),
 				$post->ID,
 				base64_encode( 'dcoupled-preview-token_'.$post->ID )
 			);
