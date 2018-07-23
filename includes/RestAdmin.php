@@ -37,10 +37,16 @@ class RestAdmin
 	 */
     public function samplePermalink($permalink, $postId, $title, $name, $post) {
 
-    	return [
-    		$this->previewPostLink($permalink, $post),
-		    ''
-	    ];
+        $clientDomain = get_option('dcoupled_client_domain', false);
+
+        if (!empty($clientDomain)) {
+            return [
+                $this->previewPostLink($permalink, $post),
+                ''
+            ];
+        }
+
+        return $permalink;
     }
 
 	/**
@@ -50,15 +56,15 @@ class RestAdmin
 	 *
 	 * @return mixed
 	 */
-    public function samplePermalinkHTML($return) {
+    public function samplePermalinkHTML($link) {
 
 	    $clientDomain = get_option('dcoupled_client_domain', false);
 
-	    if (!empty($clientDomain)) {
-		    $return = UrlUtils::getInstance()->replaceDomain($return);
+	    if (!empty($clientDomain) && strpos($link, $clientDomain) === FALSE) {
+            $link = UrlUtils::getInstance()->replaceDomain($link);
 	    }
 
-	    return $return;
+	    return $link;
 
     }
 
@@ -73,8 +79,14 @@ class RestAdmin
 
 	    $clientDomain = get_option('dcoupled_client_domain', false);
 
-	    if (!empty($clientDomain) && isset($actions['view'])) {
-		    $actions['view'] = UrlUtils::getInstance()->replaceDomain($actions['view']);
+	    if (!empty($clientDomain)) {
+	        if (isset($actions['view']) && strpos($actions['view'], $clientDomain) === FALSE) {
+                $actions['view'] = UrlUtils::getInstance()->replaceDomain($actions['view']);
+            }
+
+            if (isset($actions['preview']) && strpos($actions['preview'], $clientDomain) === FALSE) {
+                $actions['preview'] = UrlUtils::getInstance()->replaceDomain($actions['preview']);
+            }
 	    }
 
 	    return $actions;
@@ -94,7 +106,7 @@ class RestAdmin
 		if (!empty($clientDomain)) {
 
 			return sprintf('%s/preview/?preview_id=%s&token=%s',
-				$clientDomain,
+                untrailingslashit($clientDomain),
 				$post->ID,
 				base64_encode( 'dcoupled-preview-token_'.$post->ID )
 			);
