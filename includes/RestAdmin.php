@@ -22,6 +22,40 @@ class RestAdmin
 		add_filter('post_row_actions', [$this, 'rowActions'], 100, 1);
 	    add_filter('page_row_actions', [$this, 'rowActions'], 100, 1);
 
+        add_action('current_screen', [$this, 'currentScreen']);
+    }
+
+    /**
+     * Current screen actions
+     */
+    public function currentScreen() {
+
+        if ( function_exists('get_current_screen')) {
+            $screen = get_current_screen();
+
+            // Only override WP permalink on edit screen to avoid side effects
+            if ($screen->base === 'post') {
+                add_filter('post_link', [$this, 'alterPermalink'], 100, 3);
+                add_filter('page_link', [$this, 'alterPermalink'], 100, 3);
+            }
+        }
+    }
+
+    /**
+     * @param $permalink
+     * @param $post
+     * @param $leavename
+     *
+     * @return string
+     */
+    public function alterPermalink($permalink, $post, $leavename) {
+        $clientDomain = get_option('dcoupled_client_domain', false);
+
+        if (!empty($clientDomain) && strpos($permalink, $clientDomain) === FALSE) {
+            return UrlUtils::getInstance()->replaceDomain($permalink);
+        }
+
+        return $permalink;
     }
 
 	/**
@@ -39,10 +73,12 @@ class RestAdmin
 
         $clientDomain = get_option('dcoupled_client_domain', false);
 
-        if (!empty($clientDomain)) {
+        list($replaceable, $slug) = $permalink;
+
+        if (!empty($clientDomain) && strpos($replaceable, $clientDomain) === FALSE) {
             return [
-                $this->previewPostLink($permalink, $post),
-                ''
+                UrlUtils::getInstance()->replaceDomain($replaceable),
+                $slug,
             ];
         }
 
