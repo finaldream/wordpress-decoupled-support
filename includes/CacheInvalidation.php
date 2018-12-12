@@ -92,7 +92,7 @@ class CacheInvalidation {
 			    'slug' => preg_replace( '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i', '$2', get_permalink( $post_id ) ),
 		    ];
 
-			$params = apply_filters('dcoupled_cache_invalidation_params', $post, $params);
+			$params = apply_filters('dcoupled_cache_invalidation_params', $params, $post);
 
 			$this->triggered( [
 				'action' => 'destroy',
