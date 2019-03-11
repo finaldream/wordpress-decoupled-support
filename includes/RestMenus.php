@@ -244,6 +244,10 @@ class RestMenus
 
         $item        = (array) $menu_item;
 
+        $slug = $item['type'] === 'post_type' 
+            ? get_post($item['object_id'])->post_name
+            : $item['post_name'];
+
         $menu_item = [
             'id' => abs($item['ID']),
             'order' => (int) $item['menu_order'],
@@ -257,7 +261,7 @@ class RestMenus
             'description' => $item['description'],
             'object_id' => abs($item['object_id']),
             'object' => $item['object'],
-            'object_slug' => get_post($item['object_id'])->post_name,
+            'object_slug' => $slug,
             'type' => $item['type'],
             'type_label' => $item['type_label'],
         ];
