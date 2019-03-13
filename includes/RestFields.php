@@ -30,6 +30,7 @@ class RestFields
         $this->registerWPMLField();
         $this->registerTemplateField();
         $this->registerPostMetaField();
+        $this->registerCategoriesField();
     }
 
 
@@ -257,4 +258,21 @@ class RestFields
         ]);
     }
 
+    /**
+     * Add Post Categories to rest fields
+     */
+    public function registerCategoriesField() {
+
+        register_rest_field( $this->objectTypes, 'categories', [
+            'get_callback'    => function ( $object ) {
+                return get_the_category( $object['id'] );
+            },
+            'update_callback' => null,
+            'schema'          => [
+                'description' => __( 'Category' ),
+                'type'        => 'object'
+            ],
+        ] );
+
+    }
 }
