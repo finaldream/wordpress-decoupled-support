@@ -31,6 +31,28 @@ function findPostBySlug($slug)
     return null;
 }
 
+/**
+ * Extract language code from URL
+ * @param $sitepress
+ * @param $path
+ * @return bool|mixed
+ */
+function extractLangFromPath($sitepress, $path) {
+
+    $sitepress_settings = $sitepress->get_settings();
+    $active_languages = $sitepress->get_active_languages();
+
+    if ( $sitepress_settings['language_negotiation_type'] == 1 ) {
+        $parts = array_filter(explode( '/', $path ));
+        $lang = array_shift($parts);
+
+        return in_array( $lang, array_keys($active_languages) ) ? $lang : false;
+    }
+
+    return false;
+}
+
+
 
 /**
  * Class RestSingle
@@ -71,12 +93,19 @@ class RestPermalink
             return new WP_Error('REST_INVALID', 'Please provide a valid permalink', ['status' => 400]);
         }
 
+        // extract and set custom language from URL
+        global $sitepress;
+
+        if (isset($sitepress) && $lang = extractLangFromPath($sitepress, $q)) {
+            $q = preg_replace('{^/?' . $lang . '(.*$)}', '$1', $q);
+            $sitepress->switch_lang($lang, true);
+        }
+
         // try finding a post "the official" way
         if ($q === '/' && get_option('show_on_front') === 'page') {
-            $postId   = get_option('page_on_front');
+            $postId = get_option('page_on_front');
         } else {
-            $args['name'] = $q;
-            $postId       = url_to_postid($q);
+            $postId = url_to_postid($q);
         }
 
         $post = get_post($postId);
