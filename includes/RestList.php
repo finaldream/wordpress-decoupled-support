@@ -50,9 +50,13 @@ class RestList
         ];
 
         $query = "
-            SELECT ID, post_title, post_name, post_type, post_date_gmt, post_modified_gmt
+            SELECT ID, post_title, post_name, post_type, post_date_gmt, post_modified_gmt            
             FROM $wpdb->posts 
-            WHERE post_status = 'publish' AND post_type IN (\"$sqlTypes\")
+            LEFT JOIN {$wpdb->prefix}icl_translations ON 
+                ($wpdb->posts.ID = {$wpdb->prefix}icl_translations.element_id)
+            WHERE post_status = 'publish' 
+            AND post_type IN (\"$sqlTypes\")
+            AND {$wpdb->prefix}icl_translations.language_code = '".ICL_LANGUAGE_CODE."'
         ";
 
         $posts = $wpdb->get_results($query);
