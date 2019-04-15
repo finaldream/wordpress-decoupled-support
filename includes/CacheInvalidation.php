@@ -32,6 +32,12 @@ class CacheInvalidation {
 		add_action( 'save_post', [ $this, 'invalidateCache' ], 10, 2 );
 
 		add_filter( 'post_row_actions', [ $this, 'rowActions' ], 200, 2 );
+
+		// Cache invalidation shortcuts on admin toolbar
+		add_action('admin_bar_menu', [$this, 'adminToolbarMenu'], 200);
+		add_action('admin_init', [$this, 'triggerToolbarCacheInvalidation']);
+		add_filter('removable_query_args', [$this, 'removeCacheInvalidationQuery']);
+
 	}
 
 	/**
@@ -168,5 +174,95 @@ class CacheInvalidation {
 			throw new Exception( $error_message );
 		}
 
+	}
+
+	/**
+	 * Add items into WP Admin toolbar
+	 * @param $adminBar
+	 */
+	public function adminToolbarMenu($adminBar)
+	{
+		$screen = get_current_screen();
+
+		$adminBar->add_node([
+			'id' => 'dcoupled-cache-invalidation',
+			'title' => __('Clear cache'),
+			'href' => '#',
+			'meta' => [
+				'class' => 'dcoupled-cache-invalidation',
+				'title' => __('Clear cache'),
+			]
+		]);
+
+		if ($screen->base === 'post' && $id = get_the_ID()) {
+			$adminBar->add_node([
+				'id' => 'dcoupled-cache-invalidation-current-page',
+				'title' => __('Current Page'),
+				'href' => add_query_arg('dcoupled-cache-invalidation', $id),
+				'parent' => 'dcoupled-cache-invalidation',
+				'meta' => [
+					'class' => 'toolbar-dcoupled-cache-invalidation-current-page',
+					'title' => __('Clear current page cache'),
+				]
+			]);
+		}
+
+		$adminBar->add_node([
+			'id' => 'dcoupled-cache-invalidation-flush',
+			'title' => __('All Caches'),
+			'href' => add_query_arg('dcoupled-cache-invalidation', 'flush'),
+			'parent' => 'dcoupled-cache-invalidation',
+			'meta' => [
+				'class' => 'toolbar-dcoupled-cache-invalidation-flush',
+				'title' => __('Flush all caches')
+			]
+		]);
+	}
+
+	/**
+	 * Trigger toolbar actions
+	 */
+	public function triggerToolbarCacheInvalidation()
+	{
+		$invalidationAction = $_GET['dcoupled-cache-invalidation'] ?? false;
+
+		if ($invalidationAction) {
+
+			try {
+				switch ($invalidationAction) {
+					case 'flush':
+						$this->triggered([
+							'action' => 'flush'
+						]);
+						break;
+					default:
+						$post = get_post($invalidationAction);
+						$this->invalidateCache($invalidationAction, $post);
+						break;
+				}
+
+				add_action('admin_notices', function () {
+					?>
+                    <div class="notice updated is-dismissible">
+                        <p><?= __('Decoupled cache invalidation triggered!'); ?></p>
+                    </div>
+					<?php
+				});
+			} catch (Exception $e) {
+				wp_die($e->getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Remove toolbar query args after redirect
+	 * @param array $args
+	 * @return array
+	 */
+	public function removeCacheInvalidationQuery($args)
+	{
+		$args[] = 'dcoupled-cache-invalidation';
+
+		return $args;
 	}
 }
