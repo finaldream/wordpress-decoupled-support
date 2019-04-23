@@ -83,6 +83,29 @@ class UrlUtils {
 		return preg_replace( $this->domainPattern, untrailingslashit($newDomain), $string );
 	}
 
+	/***
+	 * Retrieves post permalink even if post is draft or pending.
+	 * Returns core function otherwise.
+	 *
+	 * @param int $id
+	 * @return string
+	 */
+	public static function getPostPermalink ($id = 0) {
+
+		$draft_or_pending = get_post_status($id) && in_array(get_post_status($id), ['draft', 'pending', 'auto-draft', 'future']);
+		$util = static::getInstance();
+
+		if (!$draft_or_pending) {
+			return $util->replaceDomain(get_permalink($id));
+		}
+
+		require_once ABSPATH . '/wp-admin/includes/post.php';
+		list($permalink, $postName) = get_sample_permalink($id);
+
+		return $util->replaceDomain(str_replace('%postname%', $postName, $permalink));
+
+	}
+
 }
 
 

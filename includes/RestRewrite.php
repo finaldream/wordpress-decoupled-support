@@ -3,6 +3,7 @@
  * Rewrite Wordpress URLs for Dcoupled
  */
 
+use \DcoupledSupport\UrlUtils;
 
 class RestRewrite
 {
@@ -36,6 +37,8 @@ class RestRewrite
             add_filter('wp_calculate_image_srcset', [$this, 'calculateImageSrcset'], 100);
             add_filter('the_content', [$this, 'filterUploadURL'], 100);
             add_filter('the_excerpt', [$this, 'filterUploadURL'], 100);
+			add_filter('the_content', [$this, 'resolveSafeLinks'], 100);
+			add_filter('the_excerpt', [$this, 'resolveSafeLinks'], 100);
         }
     }
 
@@ -214,4 +217,29 @@ class RestRewrite
 
         return str_replace($urls, $replacements, $content);
     }
+
+    public function resolveSafeLinks($content)
+	{
+		/**
+		 * Replace safe links (f.ex. ?p=1234) by current permalink
+		 * Inserts permalink according to SAFELINKS_DISPLAY_MODE option in theme:
+		 * may be either "auto" (SEF URL, = WP Permalink) or "nonsef" (WP Shortlink)
+		 */
+		preg_match_all("/<a (?:.*)href=[\"\']((?:(?![\"\'])[^>])*)[\"\'][^>]*>/siU", $content, $matches);
+
+		if (!empty($matches[1])) {
+			$links = array_unique($matches[1]);
+
+			foreach ($links as $link) {
+				preg_match("/\?p=(\d+)/", $link, $match);
+
+				if (!empty($match[1])) {
+					$content = str_replace($link, UrlUtils::getPostPermalink($match[1]), $content);
+				}
+			}
+		}
+
+		return $content;
+	}
+
 }
