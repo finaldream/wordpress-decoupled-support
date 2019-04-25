@@ -218,13 +218,14 @@ class RestRewrite
         return str_replace($urls, $replacements, $content);
     }
 
+
+	/**
+	 * Resolve safe links
+	 * @param $content
+	 * @return mixed
+	 */
     public function resolveSafeLinks($content)
 	{
-		/**
-		 * Replace safe links (f.ex. ?p=1234) by current permalink
-		 * Inserts permalink according to SAFELINKS_DISPLAY_MODE option in theme:
-		 * may be either "auto" (SEF URL, = WP Permalink) or "nonsef" (WP Shortlink)
-		 */
 		preg_match_all("/<a (?:.*)href=[\"\']((?:(?![\"\'])[^>])*)[\"\'][^>]*>/siU", $content, $matches);
 
 		if (!empty($matches[1])) {
