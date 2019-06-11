@@ -52,6 +52,7 @@ function decoupled_rest_api_init()
     (new RestFields())->registerRestFields();
     (new RestWPML())->registerFilters();
     (new RestRewrite())->rewrite();
+
 }
 
 function decoupled_rest_authentication($result)
@@ -60,11 +61,29 @@ function decoupled_rest_authentication($result)
     (new RestToken())->protect($result);
 }
 
+function decoupled_set_from_env()
+{
+    if ( defined( 'DECOUPLED_TOKEN' ) ) {
+		update_option('decoupled_token', DECOUPLED_TOKEN);
+    }
+    if ( defined( 'DECOUPLED_CLIENT_URL' ) ) {
+		update_option('decoupled_client_domain', DECOUPLED_CLIENT_URL);
+    }
+    if ( defined( 'DECOUPLED_CACHE_INVALIDATION_URL' ) ) {
+		update_option('decoupled_cache_invalidation_url', DECOUPLED_CACHE_INVALIDATION_URL);
+    }
+    if ( defined( 'DECOUPLED_UPLOAD_URL' ) ) {
+		update_option('decoupled_upload_url', DECOUPLED_UPLOAD_URL);
+    }
+}
+
 add_action('rest_api_init', 'decoupled_rest_api_init');
 add_filter('rest_authentication_errors', 'decoupled_rest_authentication');
 
 
 add_action('init', function () {
+
+    decoupled_set_from_env();
 
     (new RestAdmin())->addSettings();
 	(new CacheInvalidation())->register();
