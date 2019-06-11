@@ -71,12 +71,15 @@ class RestPermalink
             return new WP_Error('REST_INVALID', 'Please provide a valid permalink', ['status' => 400]);
         }
 
+        if (WpmlSupport::isAvailable()) {
+			$q = WpmlSupport::extractAndSetActiveLanguage($q);
+		}
+
         // try finding a post "the official" way
         if ($q === '/' && get_option('show_on_front') === 'page') {
-            $postId   = get_option('page_on_front');
+            $postId = get_option('page_on_front');
         } else {
-            $args['name'] = $q;
-            $postId       = url_to_postid($q);
+            $postId = url_to_postid($q);
         }
 
         $post = get_post($postId);
