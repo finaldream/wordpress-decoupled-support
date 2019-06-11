@@ -27,7 +27,7 @@
                 </th>
                 <td>
                     <input name="decoupled_token" id="decoupled_token"
-                           value="<?php echo esc_attr( get_option( 'decoupled_token' ) ); ?>" class="regular-text">
+                           value="<?php echo esc_attr( get_option( 'decoupled_token' ) ); ?>" class="regular-text" disabled>
                 </td>
             </tr>
             <tr>
@@ -37,7 +37,7 @@
                 <td>
                     <input name="decoupled_cache_invalidation_url" id="decoupled_cache_invalidation_url"
                            value="<?php echo esc_attr( get_option( 'decoupled_cache_invalidation_url' ) ); ?>"
-                           class="regular-text">
+                           class="regular-text" disabled>
                 </td>
             </tr>
             <tr>
@@ -47,11 +47,11 @@
             </tr>
             <tr>
                 <th>
-                    <label for="decoupled_upload_url">Decoupled Client Domain</label>
+                    <label for="decoupled_upload_url">Decoupled Client URL</label>
                 </th>
                 <td>
                     <input name="decoupled_client_domain" id="decoupled_client_domain"
-                           value="<?php echo esc_attr( get_option( 'decoupled_client_domain' ) ); ?>" class="regular-text">
+                           value="<?php echo esc_attr( get_option( 'decoupled_client_domain' ) ); ?>" class="regular-text" disabled>
                 </td>
             </tr>
             <tr>
@@ -60,7 +60,7 @@
                 </th>
                 <td>
                     <input name="decoupled_upload_url" id="decoupled_upload_url"
-                           value="<?php echo esc_attr( get_option( 'decoupled_upload_url' ) ); ?>" class="regular-text">
+                           value="<?php echo esc_attr( get_option( 'decoupled_upload_url' ) ); ?>" class="regular-text" disabled>
                 </td>
             </tr>
             </tbody>
