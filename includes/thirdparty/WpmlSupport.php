@@ -122,4 +122,45 @@ class WpmlSupport
 
         return $result;
     }
+
+    /**
+     * Extract and set active language from URL
+     *
+     * @param string $path
+     * @return string|string[]|null
+     */
+    static function extractAndSetActiveLanguage($path)
+    {
+        global $sitepress;
+
+        $settings = $sitepress->get_settings();
+        $activeLanguages = $sitepress->get_active_languages();
+
+        if (isset($sitepress) && $lang = self::extractLangFromPath($settings, $activeLanguages, $path)) {
+            $path = preg_replace('{^/?' . $lang . '(.*$)}', '$1', $path);
+            $sitepress->switch_lang($lang, true);
+        }
+
+        return $path;
+    }
+
+    /**
+     * Extract language code from URL
+     *
+     * @param array $settings
+     * @param array $activeLanguages
+     * @param string $path
+     * @return bool|mixed
+     */
+    static function extractLangFromPath($settings, $activeLanguages, $path)
+    {
+        if ( $settings['language_negotiation_type'] == 1 ) {
+            $parts = array_filter(explode( '/', $path ));
+            $lang = array_shift($parts);
+
+            return in_array( $lang, array_keys($activeLanguages) ) ? $lang : false;
+        }
+
+        return false;
+    }
 }

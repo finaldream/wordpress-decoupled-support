@@ -137,6 +137,25 @@ class RestRewrite
         $replacements = $this->prepareURLs($urls, $this->uploadDomain);
         $content      = $this->replaceURLs($content, $urls, $replacements);
 
+        // Find and replace anchor with attachment links
+        $urls = $this->findURLs($content, 'a', 'href', '(.jpg$|.jpeg$|.gif$|.png$|[?&]attachment_id=(\d+))');
+        $newUrls = [];
+
+        foreach ($urls as $index => $url) {
+            if (preg_match('([?&]attachment_id=(\d+))', $url, $matches)) {
+                $src = wp_get_attachment_image_src($matches[1], 'full')[0] ?? false;
+
+                if ($src) {
+                    $newUrls[] = $src;
+                }
+            }
+
+            $newUrls[] = $url;
+        }
+
+        $replacements = $this->prepareURLs($newUrls, $this->uploadDomain);
+        $content = $this->replaceURLs($content, $urls, $replacements);
+
         return $content;
     }
 
@@ -147,10 +166,11 @@ class RestRewrite
      * @param string $content
      * @param string $tag
      * @param string $attribute
+     * @param bool|string $filter
      *
      * @return array
      */
-    protected function findURLs($content, $tag, $attribute)
+    protected function findURLs($content, $tag, $attribute, $filter = false)
     {
 
         $urls = [];
@@ -169,6 +189,10 @@ class RestRewrite
             $domain = preg_replace('(^https?://)', '', site_url());
             if (!empty($domain) && strpos($url[1], $domain) === false) {
                 continue; // External links
+            }
+
+            if (is_string($filter) && !preg_match($filter, $url[1], $matches)) {
+                continue; // Filter not matched
             }
 
             $urls[] = $url[1];
