@@ -5,7 +5,7 @@
  * @see https://developer.wordpress.org/rest-api/extending-the-rest-api/modifying-responses/
  */
 
-use DcoupledSupport\UrlUtils;
+use DecoupledSupport\UrlUtils;
 
 /**
  * Class RestFields
@@ -21,7 +21,7 @@ class RestFields
     {
 
         $postTypes         = get_post_types(['show_in_rest' => true]);
-        $this->objectTypes = apply_filters('dcoupled_rest_allowed_object_types', $postTypes);
+        $this->objectTypes = apply_filters('decoupled_rest_allowed_object_types', $postTypes);
 
         $this->registerPermalinkField();
         $this->registerPostClassesField();
@@ -139,7 +139,7 @@ class RestFields
         register_rest_field($this->objectTypes, 'acf', [
                 'get_callback' => function ($object) {
 
-                    $allowed   = apply_filters('dcoupled_rest_allowed_acf_fields', []);
+                    $allowed   = apply_filters('decoupled_rest_allowed_acf_fields', []);
                     $acfFields = get_fields($object['id']);
 
                     if (!empty($allowed)) {

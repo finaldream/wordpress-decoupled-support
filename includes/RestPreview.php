@@ -44,7 +44,7 @@ class RestPreview extends RestPermalink {
 
 		$post = get_post($previewId);
 
-		$validPreview = ($post && !empty($previewToken) && (base64_decode( $previewToken) === 'dcoupled-preview-token_'.$post->ID));
+		$validPreview = ($post && !empty($previewToken) && (base64_decode( $previewToken) === 'decoupled-preview-token_'.$post->ID));
 
 		if (!$post || !$validPreview) {
 			return new WP_Error('REST_INVALID', 'Invalid preview request', ['status' => 400, 'ID' => $previewId]);

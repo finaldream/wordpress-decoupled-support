@@ -1,9 +1,9 @@
 <?php
 /**
- * Rewrite Wordpress URLs for Dcoupled
+ * Rewrite Wordpress URLs for Decoupled
  */
 
-use \DcoupledSupport\UrlUtils;
+use \DecoupledSupport\UrlUtils;
 
 class RestRewrite
 {
@@ -21,7 +21,7 @@ class RestRewrite
     public function __construct()
     {
 
-        $this->uploadDomain = get_option('dcoupled_upload_url', '');
+        $this->uploadDomain = get_option('decoupled_upload_url', '');
     }
 
 

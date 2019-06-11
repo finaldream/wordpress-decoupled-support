@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:       Dcoupled Support
+ * Plugin Name:       Decoupled Support
  * Plugin URI:        https://www.finaldream.de
- * Description:       Add Dcoupled client supports for WP REST API
+ * Description:       Add Decoupled client supports for WP REST API
  * Version:           1.11.1
  * Author:            Finaldream Productions
  * Author URI:        https://www.finaldream.de
@@ -28,21 +28,21 @@ include_once 'includes/CacheInvalidation.php';
 
 include_once 'includes/thirdparty/WpmlSupport.php';
 
-function dcoupled_admin_scripts( $hook ) {
+function decoupled_admin_scripts( $hook ) {
 
-	$allows = ['edit.php', 'post.php', 'settings_page_dcoupled-support-settings'];
+	$allows = ['edit.php', 'post.php', 'settings_page_decoupled-support-settings'];
 
 	if ( ! in_array( $hook, $allows )) {
 		return;
 	}
 
-	wp_enqueue_script( 'dcoupled_admin', plugins_url('assets/js/dcoupled-admin.js', __FILE__) );
-	wp_enqueue_style( 'dcoupled_admin', plugins_url('assets/css/dcoupled-admin.css', __FILE__) );
+	wp_enqueue_script( 'decoupled_admin', plugins_url('assets/js/decoupled-admin.js', __FILE__) );
+	wp_enqueue_style( 'decoupled_admin', plugins_url('assets/css/decoupled-admin.css', __FILE__) );
 }
 
-add_action( 'admin_enqueue_scripts', 'dcoupled_admin_scripts' );
+add_action( 'admin_enqueue_scripts', 'decoupled_admin_scripts' );
 
-function dcoupled_rest_api_init()
+function decoupled_rest_api_init()
 {
 
     (new RestPermalink())->registerRoutes();
@@ -54,14 +54,14 @@ function dcoupled_rest_api_init()
     (new RestRewrite())->rewrite();
 }
 
-function dcoupled_rest_authentication($result)
+function decoupled_rest_authentication($result)
 {
 
     (new RestToken())->protect($result);
 }
 
-add_action('rest_api_init', 'dcoupled_rest_api_init');
-add_filter('rest_authentication_errors', 'dcoupled_rest_authentication');
+add_action('rest_api_init', 'decoupled_rest_api_init');
+add_filter('rest_authentication_errors', 'decoupled_rest_authentication');
 
 
 add_action('init', function () {

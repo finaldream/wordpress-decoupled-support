@@ -1,6 +1,6 @@
 <?php
 
-use DcoupledSupport\UrlUtils;
+use DecoupledSupport\UrlUtils;
 
 class WpmlSupport
 {

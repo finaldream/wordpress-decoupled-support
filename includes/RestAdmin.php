@@ -3,7 +3,7 @@
  * Rest Settings
  */
 
-use \DcoupledSupport\UrlUtils;
+use \DecoupledSupport\UrlUtils;
 
 class RestAdmin
 {
@@ -49,7 +49,7 @@ class RestAdmin
      * @return string
      */
     public function alterPermalink($permalink, $post, $leavename) {
-        $clientDomain = get_option('dcoupled_client_domain', false);
+        $clientDomain = get_option('decoupled_client_domain', false);
 
         if (!empty($clientDomain) && strpos($permalink, $clientDomain) === FALSE) {
             return UrlUtils::getInstance()->replaceDomain($permalink);
@@ -71,7 +71,7 @@ class RestAdmin
 	 */
     public function samplePermalink($permalink, $postId, $title, $name, $post) {
 
-        $clientDomain = get_option('dcoupled_client_domain', false);
+        $clientDomain = get_option('decoupled_client_domain', false);
 
         list($replaceable, $slug) = $permalink;
 
@@ -94,7 +94,7 @@ class RestAdmin
 	 */
     public function samplePermalinkHTML($link) {
 
-	    $clientDomain = get_option('dcoupled_client_domain', false);
+	    $clientDomain = get_option('decoupled_client_domain', false);
 
 	    if (!empty($clientDomain) && strpos($link, $clientDomain) === FALSE) {
             $link = UrlUtils::getInstance()->replaceDomain($link);
@@ -113,7 +113,7 @@ class RestAdmin
 	 */
     public function rowActions($actions) {
 
-	    $clientDomain = get_option('dcoupled_client_domain', false);
+	    $clientDomain = get_option('decoupled_client_domain', false);
 
 	    if (!empty($clientDomain)) {
 	        if (isset($actions['view']) && strpos($actions['view'], $clientDomain) === FALSE) {
@@ -137,14 +137,14 @@ class RestAdmin
 	 * @return string
 	 */
     public function previewPostLink($original, $post) {
-		$clientDomain = get_option('dcoupled_client_domain', false);
+		$clientDomain = get_option('decoupled_client_domain', false);
 
 		if (!empty($clientDomain)) {
 
 			return sprintf('%s/preview/?preview_id=%s&token=%s',
                 untrailingslashit($clientDomain),
 				$post->ID,
-				base64_encode( 'dcoupled-preview-token_'.$post->ID )
+				base64_encode( 'decoupled-preview-token_'.$post->ID )
 			);
 		}
 
@@ -158,10 +158,10 @@ class RestAdmin
     {
 
         add_options_page(
-            'Dcoupled Settings',
-            'Dcoupled Settings',
+            'Decoupled Settings',
+            'Decoupled Settings',
             'manage_options',
-            'dcoupled-support-settings',
+            'decoupled-support-settings',
             [$this, 'settingPage']
         );
     }
@@ -173,26 +173,26 @@ class RestAdmin
     {
 
         register_setting(
-            'dcoupled-settings-group',
-            'dcoupled_token',
+            'decoupled-settings-group',
+            'decoupled_token',
             [$this, 'sanitize']
         );
 
         register_setting(
-            'dcoupled-settings-group',
-            'dcoupled_cache_invalidation_url',
+            'decoupled-settings-group',
+            'decoupled_cache_invalidation_url',
             [$this, 'sanitize']
         );
 
 	    register_setting(
-		    'dcoupled-settings-group',
-		    'dcoupled_client_domain',
+		    'decoupled-settings-group',
+		    'decoupled_client_domain',
 		    [$this, 'sanitize']
 	    );
 
         register_setting(
-            'dcoupled-settings-group',
-            'dcoupled_upload_url',
+            'decoupled-settings-group',
+            'decoupled_upload_url',
             [$this, 'sanitize']
         );
     }

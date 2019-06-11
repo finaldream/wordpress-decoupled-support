@@ -6,7 +6,7 @@
  * @since  02.10.2017
  */
 
-namespace DcoupledSupport;
+namespace DecoupledSupport;
 
 
 class UrlUtils {
@@ -69,7 +69,7 @@ class UrlUtils {
 	}
 
 	/**
-	 * Replace domain with Dcoupled client domain
+	 * Replace domain with Decoupled client domain
 	 *
 	 * @param $string
 	 * @param bool $newDomain
@@ -78,7 +78,7 @@ class UrlUtils {
 	 */
 	public function replaceDomain( $string, $newDomain = false ) {
 
-		$newDomain = ($newDomain) ? $newDomain : get_option('dcoupled_client_domain', '');
+		$newDomain = ($newDomain) ? $newDomain : get_option('decoupled_client_domain', '');
 
 		return preg_replace( $this->domainPattern, untrailingslashit($newDomain), $string );
 	}
