@@ -78,7 +78,8 @@ class UrlUtils {
 	 */
 	public function replaceDomain( $string, $newDomain = false ) {
 
-		$newDomain = ($newDomain) ? $newDomain : get_option('decoupled_client_domain', '');
+		$envUrl = defined('DECOUPLED_CLIENT_URL') ? DECOUPLED_CLIENT_URL : null;
+		$newDomain = ($newDomain) ? $newDomain : $envUrl;
 
 		return preg_replace( $this->domainPattern, untrailingslashit($newDomain), $string );
 	}

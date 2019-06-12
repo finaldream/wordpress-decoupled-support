@@ -49,7 +49,7 @@ class RestAdmin
      * @return string
      */
     public function alterPermalink($permalink, $post, $leavename) {
-        $clientDomain = get_option('decoupled_client_domain', false);
+        $clientDomain = defined('DECOUPLED_CLIENT_URL') ? DECOUPLED_CLIENT_URL : false;
 
         if (!empty($clientDomain) && strpos($permalink, $clientDomain) === FALSE) {
             return UrlUtils::getInstance()->replaceDomain($permalink);
@@ -71,7 +71,7 @@ class RestAdmin
 	 */
     public function samplePermalink($permalink, $postId, $title, $name, $post) {
 
-        $clientDomain = get_option('decoupled_client_domain', false);
+        $clientDomain = defined('DECOUPLED_CLIENT_URL') ? DECOUPLED_CLIENT_URL : false;
 
         list($replaceable, $slug) = $permalink;
 
@@ -94,7 +94,7 @@ class RestAdmin
 	 */
     public function samplePermalinkHTML($link) {
 
-	    $clientDomain = get_option('decoupled_client_domain', false);
+	    $clientDomain = defined('DECOUPLED_CLIENT_URL') ? DECOUPLED_CLIENT_URL : false;
 
 	    if (!empty($clientDomain) && strpos($link, $clientDomain) === FALSE) {
             $link = UrlUtils::getInstance()->replaceDomain($link);
@@ -113,7 +113,7 @@ class RestAdmin
 	 */
     public function rowActions($actions) {
 
-	    $clientDomain = get_option('decoupled_client_domain', false);
+	    $clientDomain = defined('DECOUPLED_CLIENT_URL') ? DECOUPLED_CLIENT_URL : false;
 
 	    if (!empty($clientDomain)) {
 	        if (isset($actions['view']) && strpos($actions['view'], $clientDomain) === FALSE) {
@@ -137,7 +137,7 @@ class RestAdmin
 	 * @return string
 	 */
     public function previewPostLink($original, $post) {
-		$clientDomain = get_option('decoupled_client_domain', false);
+		$clientDomain = defined('DECOUPLED_CLIENT_URL') ? DECOUPLED_CLIENT_URL : false;
 
 		if (!empty($clientDomain)) {
 

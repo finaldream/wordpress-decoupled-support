@@ -13,7 +13,7 @@ class CacheInvalidation {
 	 */
 	public function __construct() {
 
-		$this->url = get_option( 'decoupled_cache_invalidation_url', '' );
+		$this->url = defined('DECOUPLED_CACHE_INVALIDATION_URL') ? DECOUPLED_CACHE_INVALIDATION_URL : null;
 	}
 
 	/**

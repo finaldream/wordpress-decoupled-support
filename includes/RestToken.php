@@ -16,7 +16,7 @@ class RestToken
     public function protect($result)
     {
 
-        $token = get_option('decoupled_token', '');
+        $token = defined('DECOUPLED_TOKEN') ? DECOUPLED_TOKEN : null;
 
         if (!empty($result) || empty($token)) {
             return $result;

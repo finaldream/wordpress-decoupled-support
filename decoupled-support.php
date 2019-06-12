@@ -61,19 +61,13 @@ function decoupled_rest_authentication($result)
     (new RestToken())->protect($result);
 }
 
-function decoupled_set_from_env()
+function decoupled_admin_warning()
 {
-    if ( defined( 'DECOUPLED_TOKEN' ) ) {
-		update_option('decoupled_token', DECOUPLED_TOKEN);
-    }
-    if ( defined( 'DECOUPLED_CLIENT_URL' ) ) {
-		update_option('decoupled_client_domain', DECOUPLED_CLIENT_URL);
-    }
-    if ( defined( 'DECOUPLED_CACHE_INVALIDATION_URL' ) ) {
-		update_option('decoupled_cache_invalidation_url', DECOUPLED_CACHE_INVALIDATION_URL);
-    }
-    if ( defined( 'DECOUPLED_UPLOAD_URL' ) ) {
-		update_option('decoupled_upload_url', DECOUPLED_UPLOAD_URL);
+    if(in_array('administrator', wp_get_current_user()->roles)) //check the current user role 
+    {
+        $class = 'notice notice-warning is-dismissible';
+        $message = 'Please check the messages in Decoupled Settings';
+        printf( '<div class="%1$s"><p><strong>Decoupled:</strong> %2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
     }
 }
 
@@ -82,8 +76,14 @@ add_filter('rest_authentication_errors', 'decoupled_rest_authentication');
 
 
 add_action('init', function () {
-
-    decoupled_set_from_env();
+    //Check Env Constants
+    if ( !defined( 'DECOUPLED_TOKEN' ) || 
+         !defined( 'DECOUPLED_CLIENT_URL' ) || 
+         !defined( 'DECOUPLED_CACHE_INVALIDATION_URL' ) ||
+         !defined( 'DECOUPLED_UPLOAD_URL' ) ) {
+            // We might activate later on, saving dissmisses state
+            //add_action( 'admin_notices', 'decoupled_admin_warning' );
+    }
 
     (new RestAdmin())->addSettings();
 	(new CacheInvalidation())->register();

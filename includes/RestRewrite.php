@@ -21,7 +21,7 @@ class RestRewrite
     public function __construct()
     {
 
-        $this->uploadDomain = get_option('decoupled_upload_url', '');
+        $this->uploadDomain = defined('DECOUPLED_UPLOAD_URL') ? DECOUPLED_UPLOAD_URL : null;
     }
 
 
