@@ -13,7 +13,7 @@ class CacheInvalidation {
 	 */
 	public function __construct() {
 
-		$this->url = get_option( 'dcoupled_cache_invalidation_url', '' );
+		$this->url = defined('DECOUPLED_CACHE_INVALIDATION_URL') ? DECOUPLED_CACHE_INVALIDATION_URL : null;
 	}
 
 	/**
@@ -27,8 +27,8 @@ class CacheInvalidation {
 
 		add_action('post_submitbox_start', [$this, 'clearCacheButton']);
 
-		add_action( 'wp_ajax_dcoupled_flush_cache', [ $this, 'ajaxFlushCache' ] );
-		add_action( 'wp_ajax_dcoupled_invalidate_cache', [ $this, 'ajaxInvalidateCache' ] );
+		add_action( 'wp_ajax_decoupled_flush_cache', [ $this, 'ajaxFlushCache' ] );
+		add_action( 'wp_ajax_decoupled_invalidate_cache', [ $this, 'ajaxInvalidateCache' ] );
 		add_action( 'save_post', [ $this, 'invalidateCache' ], 10, 2 );
 
 		add_filter( 'post_row_actions', [ $this, 'rowActions' ], 200, 2 );
@@ -98,7 +98,7 @@ class CacheInvalidation {
 			    'slug' => preg_replace( '/^(http)?s?:?\/\/[^\/]*(\/?.*)$/i', '$2', get_permalink( $post_id ) ),
 		    ];
 
-			$params = apply_filters('dcoupled_cache_invalidation_params', $params, $post);
+			$params = apply_filters('decoupled_cache_invalidation_params', $params, $post);
 
 			$this->triggered( [
 				'action' => 'destroy',
@@ -132,8 +132,8 @@ class CacheInvalidation {
 		?>
         <div class="clear-cache-action">
             <button
-                    class="dcoupled-clear-cache button"
-                    data-action="dcoupled_invalidate_cache"
+                    class="decoupled-clear-cache button"
+                    data-action="decoupled_invalidate_cache"
                     data-post-id="<?= $post->ID ?>"><?= __( 'Clear cache' ) ?>
             </button>
             <span class="spinner"></span>
@@ -145,7 +145,7 @@ class CacheInvalidation {
 
 	    if ( !empty( $post ) && $post->post_status === 'publish') {
 	        $actions['clear-cache'] = sprintf(
-		        '<a class="dcoupled-clear-cache" href="#" data-action="dcoupled_invalidate_cache" data-post-id="%s">%s</a>',
+		        '<a class="decoupled-clear-cache" href="#" data-action="decoupled_invalidate_cache" data-post-id="%s">%s</a>',
 		        $post->ID,
 		        __( 'Clear cache' )
 	        );
@@ -185,35 +185,35 @@ class CacheInvalidation {
 		$screen = get_current_screen();
 
 		$adminBar->add_node([
-			'id' => 'dcoupled-cache-invalidation',
+			'id' => 'decoupled-cache-invalidation',
 			'title' => __('Clear cache'),
 			'href' => '#',
 			'meta' => [
-				'class' => 'dcoupled-cache-invalidation',
+				'class' => 'decoupled-cache-invalidation',
 				'title' => __('Clear cache'),
 			]
 		]);
 
 		if ($screen->base === 'post' && $id = get_the_ID()) {
 			$adminBar->add_node([
-				'id' => 'dcoupled-cache-invalidation-current-page',
+				'id' => 'decoupled-cache-invalidation-current-page',
 				'title' => __('Current Page'),
-				'href' => add_query_arg('dcoupled-cache-invalidation', $id),
-				'parent' => 'dcoupled-cache-invalidation',
+				'href' => add_query_arg('decoupled-cache-invalidation', $id),
+				'parent' => 'decoupled-cache-invalidation',
 				'meta' => [
-					'class' => 'toolbar-dcoupled-cache-invalidation-current-page',
+					'class' => 'toolbar-decoupled-cache-invalidation-current-page',
 					'title' => __('Clear current page cache'),
 				]
 			]);
 		}
 
 		$adminBar->add_node([
-			'id' => 'dcoupled-cache-invalidation-flush',
+			'id' => 'decoupled-cache-invalidation-flush',
 			'title' => __('All Caches'),
-			'href' => add_query_arg('dcoupled-cache-invalidation', 'flush'),
-			'parent' => 'dcoupled-cache-invalidation',
+			'href' => add_query_arg('decoupled-cache-invalidation', 'flush'),
+			'parent' => 'decoupled-cache-invalidation',
 			'meta' => [
-				'class' => 'toolbar-dcoupled-cache-invalidation-flush',
+				'class' => 'toolbar-decoupled-cache-invalidation-flush',
 				'title' => __('Flush all caches')
 			]
 		]);
@@ -224,7 +224,7 @@ class CacheInvalidation {
 	 */
 	public function triggerToolbarCacheInvalidation()
 	{
-		$invalidationAction = $_GET['dcoupled-cache-invalidation'] ?? false;
+		$invalidationAction = $_GET['decoupled-cache-invalidation'] ?? false;
 
 		if ($invalidationAction) {
 
@@ -261,7 +261,7 @@ class CacheInvalidation {
 	 */
 	public function removeCacheInvalidationQuery($args)
 	{
-		$args[] = 'dcoupled-cache-invalidation';
+		$args[] = 'decoupled-cache-invalidation';
 
 		return $args;
 	}

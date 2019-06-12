@@ -1,6 +1,6 @@
 {
-  "name": "finaldream/wordpress-dcoupled-support",
-  "description": "Dcoupled support for Wordpress",
+  "name": "finaldream/wordpress-decoupled-support",
+  "description": "Decoupled support for Wordpress",
   "type": "wordpress-plugin",
   "license": "MIT",
   "authors": [

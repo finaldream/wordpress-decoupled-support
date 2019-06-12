@@ -16,7 +16,7 @@ class RestToken
     public function protect($result)
     {
 
-        $token = get_option('dcoupled_token', '');
+        $token = defined('DECOUPLED_TOKEN') ? DECOUPLED_TOKEN : null;
 
         if (!empty($result) || empty($token)) {
             return $result;
@@ -26,8 +26,8 @@ class RestToken
         $headers = array_change_key_case(getallheaders(), CASE_LOWER);
 
         $headerToken = null;
-        if (isset($headers['dcoupled-token'])) {
-            $headerToken = $headers['dcoupled-token'];
+        if (isset($headers['decoupled-token'])) {
+            $headerToken = $headers['decoupled-token'];
         } else if (isset($headers['decoupled-token'])) {
             $headerToken = $headers['decoupled-token'];
         }

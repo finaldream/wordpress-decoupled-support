@@ -1,6 +1,6 @@
 <?php
 /**
- * Dcoupled Settings Page
+ * Decoupled Settings Page
  *
  * @author Louis Thai <louis.thai@finaldream.de>
  * @since 31.08.2017
@@ -9,35 +9,33 @@
 ?>
 
 <div class="wrap">
-    <h1>Dcoupled Settings</h1>
+    <h1>Decoupled Settings</h1>
     <hr class="wp-header-end">
-    <form name="dcoupled" method="post" action="options.php">
-		<?php settings_fields( 'dcoupled-settings-group' ); ?>
-		<?php do_settings_sections( 'dcoupled-settings-group' ); ?>
         <table class="form-table">
             <tbody>
             <tr>
                 <td colspan="2">
-                    <h3>Basic Settings</h3>
+                    <h3>Settings Information</h3>
                 </td>
             </tr>
             <tr>
                 <th>
-                    <label for="dcoupled_token">Dcoupled Auth Token</label>
+                    <label for="decoupled_token">Decoupled Auth Token</label>
                 </th>
                 <td>
-                    <input name="dcoupled_token" id="dcoupled_token"
-                           value="<?php echo esc_attr( get_option( 'dcoupled_token' ) ); ?>" class="regular-text">
+                    <?php echo defined('DECOUPLED_TOKEN') ? 
+                    DECOUPLED_TOKEN 
+                    : 'Please define constant DECOUPLED_TOKEN'; ?>
                 </td>
             </tr>
             <tr>
                 <th>
-                    <label for="dcoupled_publish_trigger_url">Cache Invalidation URL</label>
+                    <label for="decoupled_cache_invalidation_url">Cache Invalidation URL</label>
                 </th>
                 <td>
-                    <input name="dcoupled_cache_invalidation_url" id="dcoupled_cache_invalidation_url"
-                           value="<?php echo esc_attr( get_option( 'dcoupled_cache_invalidation_url' ) ); ?>"
-                           class="regular-text">
+                    <?php echo defined('DECOUPLED_CACHE_INVALIDATION_URL') ? 
+                    DECOUPLED_CACHE_INVALIDATION_URL 
+                    : 'Please define constant DECOUPLED_CACHE_INVALIDATION_URL'; ?>
                 </td>
             </tr>
             <tr>
@@ -47,29 +45,36 @@
             </tr>
             <tr>
                 <th>
-                    <label for="dcoupled_upload_url">Dcoupled Client Domain</label>
+                    <label for="decoupled_client_url">Decoupled Client URL (including Protocol)</label>
                 </th>
                 <td>
-                    <input name="dcoupled_client_domain" id="dcoupled_client_domain"
-                           value="<?php echo esc_attr( get_option( 'dcoupled_client_domain' ) ); ?>" class="regular-text">
+                    <?php echo defined('DECOUPLED_CLIENT_URL') ? 
+                        DECOUPLED_CLIENT_URL 
+                        : 'Please define constant DECOUPLED_CLIENT_URL'; ?>
                 </td>
             </tr>
+            <?php if (defined('DECOUPLED_CLIENT_URL') && !filter_var(DECOUPLED_CLIENT_URL, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) { ?>
+            <tr>
+                <th style="color: red;" colspan="2">
+                    WARNING: The Decoupled Client URL must include the protocol ( http:// or https:// )
+                </th>
+            </tr>
+            <?php } ?>
             <tr>
                 <th>
-                    <label for="dcoupled_upload_url">Uploads URL</label>
+                    <label for="decoupled_upload_url">Uploads URL</label>
                 </th>
                 <td>
-                    <input name="dcoupled_upload_url" id="dcoupled_upload_url"
-                           value="<?php echo esc_attr( get_option( 'dcoupled_upload_url' ) ); ?>" class="regular-text">
+                    <?php echo defined('DECOUPLED_UPLOAD_URL') ? 
+                        DECOUPLED_UPLOAD_URL 
+                        : 'Please define constant DECOUPLED_UPLOAD_URL'; ?>
                 </td>
             </tr>
             </tbody>
         </table>
         <p class="submit">
-            <input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
-            <a id="dcoupled_flush_cache" href="#" class="dcoupled-clear-cache button button-large" data-action="dcoupled_flush_cache">Clear all Caches</a>
+            <a id="decoupled_flush_cache" href="#" class="decoupled-clear-cache button button-large" data-action="decoupled_flush_cache">Clear all Caches</a>
             <span class="spinner" style="float: none"></span>
         </p>
-    </form>
 </div>
 

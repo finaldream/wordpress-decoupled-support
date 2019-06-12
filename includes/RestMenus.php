@@ -5,7 +5,7 @@
  * @see https://developer.wordpress.org/rest-api/extending-the-rest-api/routes-and-endpoints/
  */
 
-use DcoupledSupport\UrlUtils;
+use DecoupledSupport\UrlUtils;
 
 /**
  * Class RestMenus

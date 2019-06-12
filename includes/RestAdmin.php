@@ -3,7 +3,7 @@
  * Rest Settings
  */
 
-use \DcoupledSupport\UrlUtils;
+use \DecoupledSupport\UrlUtils;
 
 class RestAdmin
 {
@@ -15,7 +15,6 @@ class RestAdmin
     {
 
         add_action('admin_menu', [$this, 'menu']);
-        add_action('admin_init', [$this, 'settings']);
         add_filter('preview_post_link', [$this, 'previewPostLink'], 100, 2);
 		add_filter('get_sample_permalink', [$this, 'samplePermalink'], 100, 5);
 		add_filter('get_sample_permalink_html', [$this, 'samplePermalinkHTML'], 100, 1);
@@ -49,7 +48,7 @@ class RestAdmin
      * @return string
      */
     public function alterPermalink($permalink, $post, $leavename) {
-        $clientDomain = get_option('dcoupled_client_domain', false);
+        $clientDomain = defined('DECOUPLED_CLIENT_URL') ? DECOUPLED_CLIENT_URL : false;
 
         if (!empty($clientDomain) && strpos($permalink, $clientDomain) === FALSE) {
             return UrlUtils::getInstance()->replaceDomain($permalink);
@@ -71,7 +70,7 @@ class RestAdmin
 	 */
     public function samplePermalink($permalink, $postId, $title, $name, $post) {
 
-        $clientDomain = get_option('dcoupled_client_domain', false);
+        $clientDomain = defined('DECOUPLED_CLIENT_URL') ? DECOUPLED_CLIENT_URL : false;
 
         list($replaceable, $slug) = $permalink;
 
@@ -94,7 +93,7 @@ class RestAdmin
 	 */
     public function samplePermalinkHTML($link) {
 
-	    $clientDomain = get_option('dcoupled_client_domain', false);
+	    $clientDomain = defined('DECOUPLED_CLIENT_URL') ? DECOUPLED_CLIENT_URL : false;
 
 	    if (!empty($clientDomain) && strpos($link, $clientDomain) === FALSE) {
             $link = UrlUtils::getInstance()->replaceDomain($link);
@@ -113,7 +112,7 @@ class RestAdmin
 	 */
     public function rowActions($actions) {
 
-	    $clientDomain = get_option('dcoupled_client_domain', false);
+	    $clientDomain = defined('DECOUPLED_CLIENT_URL') ? DECOUPLED_CLIENT_URL : false;
 
 	    if (!empty($clientDomain)) {
 	        if (isset($actions['view']) && strpos($actions['view'], $clientDomain) === FALSE) {
@@ -137,14 +136,14 @@ class RestAdmin
 	 * @return string
 	 */
     public function previewPostLink($original, $post) {
-		$clientDomain = get_option('dcoupled_client_domain', false);
+		$clientDomain = defined('DECOUPLED_CLIENT_URL') ? DECOUPLED_CLIENT_URL : false;
 
 		if (!empty($clientDomain)) {
 
 			return sprintf('%s/preview/?preview_id=%s&token=%s',
                 untrailingslashit($clientDomain),
 				$post->ID,
-				base64_encode( 'dcoupled-preview-token_'.$post->ID )
+				base64_encode( 'decoupled-preview-token_'.$post->ID )
 			);
 		}
 
@@ -158,42 +157,11 @@ class RestAdmin
     {
 
         add_options_page(
-            'Dcoupled Settings',
-            'Dcoupled Settings',
+            'Decoupled Settings',
+            'Decoupled Settings',
             'manage_options',
-            'dcoupled-support-settings',
+            'decoupled-support-settings',
             [$this, 'settingPage']
-        );
-    }
-
-    /**
-     * Setting fields
-     */
-    public function settings()
-    {
-
-        register_setting(
-            'dcoupled-settings-group',
-            'dcoupled_token',
-            [$this, 'sanitize']
-        );
-
-        register_setting(
-            'dcoupled-settings-group',
-            'dcoupled_cache_invalidation_url',
-            [$this, 'sanitize']
-        );
-
-	    register_setting(
-		    'dcoupled-settings-group',
-		    'dcoupled_client_domain',
-		    [$this, 'sanitize']
-	    );
-
-        register_setting(
-            'dcoupled-settings-group',
-            'dcoupled_upload_url',
-            [$this, 'sanitize']
         );
     }
 

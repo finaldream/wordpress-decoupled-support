@@ -1,5 +1,5 @@
 /**
- * Dcoupled Admin scripts
+ * Decoupled Admin scripts
  *
  * @author Louis Thai <louis.thai@finaldream.de>
  * @since 28.11.2017
@@ -22,11 +22,11 @@ jQuery(document).ready(function($) {
     var callback = function(res) {
         ajaxMessage(res.data || 'Error occurred', !res.success);
 
-        $('.dcoupled-clear-cache').removeAttr('disabled');
-        $('.dcoupled-clear-cache').next('.spinner').removeClass('is-active');
+        $('.decoupled-clear-cache').removeAttr('disabled');
+        $('.decoupled-clear-cache').next('.spinner').removeClass('is-active');
     };
 
-    $('.dcoupled-clear-cache').on('click', function(e) {
+    $('.decoupled-clear-cache').on('click', function(e) {
         e.preventDefault();
 
         $(this).attr('disabled', true);
