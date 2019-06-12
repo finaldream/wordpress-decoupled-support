@@ -45,7 +45,7 @@
             </tr>
             <tr>
                 <th>
-                    <label for="decoupled_client_url">Decoupled Client Domain (including Scheme)</label>
+                    <label for="decoupled_client_url">Decoupled Client URL (including Protocol)</label>
                 </th>
                 <td>
                     <?php echo defined('DECOUPLED_CLIENT_URL') ? 
@@ -56,7 +56,7 @@
             <?php if (defined('DECOUPLED_CLIENT_URL') && !filter_var(DECOUPLED_CLIENT_URL, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) { ?>
             <tr>
                 <th style="color: red;" colspan="2">
-                    WARNING: The Decoupled Client URL must include the Scheme ( http:// or https:// )
+                    WARNING: The Decoupled Client URL must include the protocol ( http:// or https:// )
                 </th>
             </tr>
             <?php } ?>
