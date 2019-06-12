@@ -15,7 +15,6 @@ class RestAdmin
     {
 
         add_action('admin_menu', [$this, 'menu']);
-        add_action('admin_init', [$this, 'settings']);
         add_filter('preview_post_link', [$this, 'previewPostLink'], 100, 2);
 		add_filter('get_sample_permalink', [$this, 'samplePermalink'], 100, 5);
 		add_filter('get_sample_permalink_html', [$this, 'samplePermalinkHTML'], 100, 1);
@@ -163,37 +162,6 @@ class RestAdmin
             'manage_options',
             'decoupled-support-settings',
             [$this, 'settingPage']
-        );
-    }
-
-    /**
-     * Setting fields
-     */
-    public function settings()
-    {
-
-        register_setting(
-            'decoupled-settings-group',
-            'decoupled_token',
-            [$this, 'sanitize']
-        );
-
-        register_setting(
-            'decoupled-settings-group',
-            'decoupled_cache_invalidation_url',
-            [$this, 'sanitize']
-        );
-
-	    register_setting(
-		    'decoupled-settings-group',
-		    'decoupled_client_domain',
-		    [$this, 'sanitize']
-	    );
-
-        register_setting(
-            'decoupled-settings-group',
-            'decoupled_upload_url',
-            [$this, 'sanitize']
         );
     }
 
