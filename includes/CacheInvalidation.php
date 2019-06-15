@@ -165,7 +165,10 @@ class CacheInvalidation {
 	public function triggered( $args ) {
 
 		$response = wp_remote_post( $this->url, [
-		    'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
+		    'headers' => [
+				'Content-Type' => 'application/json; charset=utf-8',
+				'Authorization' => 'Basic'. base64_encode(DECOUPLED_BASIC_AUTH)
+			],
 			'body'    => json_encode([ 'cache' => $args ]),
 		] );
 
