@@ -70,6 +70,16 @@
                         : 'Please define constant DECOUPLED_UPLOAD_URL'; ?>
                 </td>
             </tr>
+            <tr>
+                <th>
+                    <label for="decoupled_upload_url">Basic Authentication (Cache Clear)</label>
+                </th>
+                <td>
+                    <?php echo (defined('DECOUPLED_BASIC_AUTH') && DECOUPLED_BASIC_AUTH != null ) ? 
+                        'Basic Authentication is set'
+                        : 'Please define constant DECOUPLED_BASIC_AUTH to enable it'; ?>
+                </td>
+            </tr>
             </tbody>
         </table>
         <p class="submit">

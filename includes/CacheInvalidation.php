@@ -164,11 +164,14 @@ class CacheInvalidation {
 	 */
 	public function triggered( $args ) {
 
+		$headers = [
+			'Content-Type' => 'application/json; charset=utf-8'
+		];
+		if (defined(DECOUPLED_BASIC_AUTH) && DECOUPLED_BASIC_AUTH != null ) {
+			$headers['Authorization'] = 'Basic '. base64_encode(DECOUPLED_BASIC_AUTH);
+		}
 		$response = wp_remote_post( $this->url, [
-		    'headers' => [
-				'Content-Type' => 'application/json; charset=utf-8',
-				'Authorization' => 'Basic '. base64_encode(DECOUPLED_BASIC_AUTH)
-			],
+		    'headers' => $headers,
 			'body'    => json_encode([ 'cache' => $args ]),
 		] );
 
