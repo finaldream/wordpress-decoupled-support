@@ -21,9 +21,9 @@
             <tr>
                 <th>
                     <label for="decoupled_token">Decoupled Auth Token</label>
-                </th>
+                </th>   
                 <td>
-                    <?php echo defined('DECOUPLED_TOKEN') ? 
+                    <?php echo (defined('DECOUPLED_TOKEN') && DECOUPLED_TOKEN != null ) ? 
                     DECOUPLED_TOKEN 
                     : 'Please define constant DECOUPLED_TOKEN'; ?>
                 </td>
@@ -33,7 +33,7 @@
                     <label for="decoupled_cache_invalidation_url">Cache Invalidation URL</label>
                 </th>
                 <td>
-                    <?php echo defined('DECOUPLED_CACHE_INVALIDATION_URL') ? 
+                    <?php echo (defined('DECOUPLED_CACHE_INVALIDATION_URL') && DECOUPLED_CACHE_INVALIDATION_URL != null ) ? 
                     DECOUPLED_CACHE_INVALIDATION_URL 
                     : 'Please define constant DECOUPLED_CACHE_INVALIDATION_URL'; ?>
                 </td>
@@ -48,12 +48,12 @@
                     <label for="decoupled_client_url">Decoupled Client URL (including Protocol)</label>
                 </th>
                 <td>
-                    <?php echo defined('DECOUPLED_CLIENT_URL') ? 
+                    <?php echo (defined('DECOUPLED_CLIENT_URL') && DECOUPLED_CLIENT_URL != null ) ? 
                         DECOUPLED_CLIENT_URL 
                         : 'Please define constant DECOUPLED_CLIENT_URL'; ?>
                 </td>
             </tr>
-            <?php if (defined('DECOUPLED_CLIENT_URL') && !filter_var(DECOUPLED_CLIENT_URL, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) { ?>
+            <?php if ( (defined('DECOUPLED_CLIENT_URL') && DECOUPLED_CLIENT_URL != null ) && !filter_var(DECOUPLED_CLIENT_URL, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) { ?>
             <tr>
                 <th style="color: red;" colspan="2">
                     WARNING: The Decoupled Client URL must include the protocol ( http:// or https:// )
@@ -65,9 +65,19 @@
                     <label for="decoupled_upload_url">Uploads URL</label>
                 </th>
                 <td>
-                    <?php echo defined('DECOUPLED_UPLOAD_URL') ? 
+                    <?php echo (defined('DECOUPLED_UPLOAD_URL') && DECOUPLED_UPLOAD_URL != null ) ? 
                         DECOUPLED_UPLOAD_URL 
                         : 'Please define constant DECOUPLED_UPLOAD_URL'; ?>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <label for="decoupled_upload_url">Basic Authentication (Cache Clear)</label>
+                </th>
+                <td>
+                    <?php echo (defined('DECOUPLED_BASIC_AUTH') && DECOUPLED_BASIC_AUTH != null ) ? 
+                        'Basic Authentication is set'
+                        : 'Please define constant DECOUPLED_BASIC_AUTH to enable it'; ?>
                 </td>
             </tr>
             </tbody>

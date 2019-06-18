@@ -93,6 +93,9 @@ class RestPermalink
             return new WP_Error('REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $q]);
         }
 
+        if ( trim(wp_make_link_relative(get_permalink($post)), '/') != trim($q, '/') ) {
+            return new WP_Error('REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $q]);
+        }
 
         $serialized = $this->serialize($post, $request);
 

@@ -28,8 +28,8 @@ class RestToken
         $headerToken = null;
         if (isset($headers['decoupled-token'])) {
             $headerToken = $headers['decoupled-token'];
-        } else if (isset($headers['decoupled-token'])) {
-            $headerToken = $headers['decoupled-token'];
+        } else if (isset($headers['dcoupled-token'])) {
+            $headerToken = $headers['dcoupled-token'];
         }
 
         if ($headerToken == null) {
