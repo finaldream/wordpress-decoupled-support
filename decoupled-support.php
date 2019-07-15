@@ -52,6 +52,7 @@ function decoupled_rest_api_init()
     (new RestFields())->registerRestFields();
     (new RestWPML())->registerFilters();
     (new RestRewrite())->rewrite();
+	(new CacheInvalidation())->registerRoutes();
 
 }
 

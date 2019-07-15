@@ -8,12 +8,45 @@ class CacheInvalidation {
 
 	public $url = '';
 
+	const API_NAMESPACE = 'wp/v2';
+
 	/**
 	 * CacheInvalidation constructor.
 	 */
 	public function __construct() {
 
 		$this->url = defined('DECOUPLED_CACHE_INVALIDATION_URL') ? DECOUPLED_CACHE_INVALIDATION_URL : null;
+	}
+
+	/**
+	 * Register Cache callback route.
+	 * @return void
+	 */
+	public function registerRoutes()
+	{
+
+		register_rest_route(static::API_NAMESPACE, '/decoupled-notify', [
+			[
+				'methods' => WP_REST_Server::EDITABLE,
+				'callback' => [$this, 'setNotification'],
+				'args' => [
+					'date' => [
+						'default' => time(),
+					],
+					'payload' => [
+						'default' => false,
+					]
+				],
+			]
+		]);
+	}
+
+	public function setNotification($request) 
+	{  
+		$message = $request->get_json_params()['payload'] ?? 'Unexpected error!';
+		$date = $request->get_json_params()['date'];
+		update_option( 'decoupled_cache_clear_status', 'On '.$date.': '.$message);
+		return rest_ensure_response($request->get_json_params()['payload']);
 	}
 
 	/**
@@ -44,11 +77,12 @@ class CacheInvalidation {
 	 * Flush all cache
 	 */
 	public function ajaxFlushCache() {
+		update_option( 'decoupled_cache_clear_status', 'Cache clear is in progress, started on '.date("d/m/Y H:i:s"));
 		try {
 			$this->triggered( [
 				'action' => 'flush'
 			] );
-			wp_send_json_success( 'All cache was cleared' );
+			wp_send_json_success( 'Cache clearing initialized' );
 		} catch ( Exception $e ) {
 			wp_send_json_error( $e->getMessage() );
 		}
