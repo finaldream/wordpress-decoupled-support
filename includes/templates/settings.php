@@ -91,11 +91,28 @@
         </p>
         <p>
             <?php 
-                $latest = get_option('decoupled_cache_clear_status');
-                if($latest) {
-                    echo $latest;
+                // TODO: Move the display logic to a method in CallbackNotifications Class
+                $log = get_transient( 'decoupled_notifications_base' );
+                if(sizeof($log) > 0) {
+                    $cacheEvents = array_filter($log, function ($event) {
+                        return in_array('Cache', $event['tags']);
+                    });
+                    if(sizeof($cacheEvents) > 0) {
+                        $i = 0;
+                        $limit = 5;
+                        foreach (array_reverse($cacheEvents) as $event) if ($i < $limit)  {     
+                            $datetime = $event['date'];
+                            $timezone = 'Europe/Berlin';
+                            $date = new \DateTime( $datetime, new \DateTimeZone( 'UTC' ) );
+                            $date->setTimezone( new \DateTimeZone( $timezone ) );
+                            echo '<p>'.$date->format('Y/m/d H:i:s').' - '.$event['message'].'</p>';
+                            $i++;
+                        }
+                    } else {
+                        echo '<p>Cache clearing has not been recently activated</p>';
+                    }
                 } else  {
-                    echo 'Cache clearing has not been initialized';
+                    echo '<p>Cache clearing has not been recently activated</p>';
                 }
             ?>             
         </p>
