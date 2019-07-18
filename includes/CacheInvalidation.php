@@ -44,9 +44,7 @@ class CacheInvalidation {
 	/**
 	 * Flush all cache
 	 */
-	public function ajaxFlushCache() {
-		update_option( 'decoupled_cache_clear_status', 'Cache clear is in progress, started on '.date("d/m/Y H:i:s"));
-		try {
+	public function ajaxFlushCache() {try {
 			$this->triggered( [
 				'action' => 'flush'
 			] );
