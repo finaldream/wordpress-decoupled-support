@@ -6,63 +6,65 @@
  * @since 17.11.2017
  */
 
-class RestPreview extends RestPermalink {
+class RestPreview extends RestPermalink
+{
 
-	const API_NAMESPACE = 'wp/v2';
+    const API_NAMESPACE = 'wp/v2';
 
-	/**
-	 * Register menus route.
-	 * @return void
-	 */
-	public function registerRoutes()
-	{
+    /**
+     * Register menus route.
+     * @return void
+     */
+    public function registerRoutes()
+    {
 
-		register_rest_route(static::API_NAMESPACE, '/preview', [
-			[
-				'methods' => WP_REST_Server::READABLE,
-				'callback' => [$this, 'getPreview'],
-				'args' => [
-					'preview_id' => [
-						'default' => false,
-					],
-					'token' => [
-						'default' => false,
-					]
-				],
-			]
-		]);
-	}
+        register_rest_route(static::API_NAMESPACE, '/preview', [
+            [
+                'methods' => WP_REST_Server::READABLE,
+                'callback' => [$this, 'getPreview'],
+                'args' => [
+                    'preview_id' => [
+                        'default' => false,
+                    ],
+                    'token' => [
+                        'default' => false,
+                    ]
+                ],
+            ]
+        ]);
+    }
 
-	public function getPreview($request) {
+    public function getPreview($request)
+    {
 
-		$previewId    = $request['preview_id'];
-		$previewToken = $request['token'];
+        $previewId = $request['preview_id'];
+        $previewToken = $request['token'];
 
-		if (empty($previewId) || empty($previewToken)) {
-			return new WP_Error('REST_INVALID', 'Please provide a valid preview params', ['status' => 400]);
-		}
+        if (empty($previewId) || empty($previewToken)) {
+            return new WP_Error('REST_INVALID', 'Please provide a valid preview params', ['status' => 400]);
+        }
 
-		$post = get_post($previewId);
+        $post = get_post($previewId);
 
-		$validPreview = ($post && !empty($previewToken) && (base64_decode( $previewToken) === 'decoupled-preview-token_'.$post->ID));
+        $validPreview = ($post && !empty($previewToken) && (base64_decode($previewToken) === 'decoupled-preview-token_' . $post->ID));
 
-		if (!$post || !$validPreview) {
-			return new WP_Error('REST_INVALID', 'Invalid preview request', ['status' => 400, 'ID' => $previewId]);
-		}
+        if (!$post || !$validPreview) {
+            return new WP_Error('REST_INVALID', 'Invalid preview request', ['status' => 400, 'ID' => $previewId]);
+        }
 
-		$preview = wp_get_post_autosave( $post->ID );
+        $preview = wp_get_post_autosave($post->ID);
 
-		if ( is_object( $preview ) ) {
-			$post->ID = $preview->ID;
-		}
+        if (is_object($preview)) {
+            $post->ID = $preview->ID;
+        }
 
         $serialized = $this->serialize($post, $request);
 
         $serialized = apply_filters('rest_preview_response', $serialized);
 
-		return rest_ensure_response($serialized);
+        return rest_ensure_response($serialized);
 
-	}
+    }
 
 
 }
