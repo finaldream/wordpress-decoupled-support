@@ -47,7 +47,7 @@ class CacheInvalidation {
 			$this->triggered( [
 				'action' => 'flush'
 			] );
-			wp_send_json_success( 'Cache clearing initialized' );
+			wp_send_json_success( 'Start clearing cache...' );
 		} catch ( Exception $e ) {
 			wp_send_json_error( $e->getMessage() );
 		}
