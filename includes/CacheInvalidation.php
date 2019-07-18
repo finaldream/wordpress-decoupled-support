@@ -44,7 +44,8 @@ class CacheInvalidation {
 	/**
 	 * Flush all cache
 	 */
-	public function ajaxFlushCache() {try {
+	public function ajaxFlushCache() {
+		try {
 			$this->triggered( [
 				'action' => 'flush'
 			] );
