@@ -73,9 +73,17 @@ function decoupled_admin_warning()
     }
 }
 
+function decoupled_viewsite_link($wp_admin_bar)
+{
+
+    $node = $wp_admin_bar->get_node('view-site');
+    $node->meta['target'] = '_blank';
+    $node->href = DECOUPLED_CLIENT_URL;
+    $wp_admin_bar->add_node($node);
+}
+
 add_action('rest_api_init', 'decoupled_rest_api_init');
 add_filter('rest_authentication_errors', 'decoupled_rest_authentication');
-
 
 add_action('init', function () {
     //Check Env Constants
@@ -93,5 +101,10 @@ add_action('init', function () {
     /* Initialize third-parties */
     if (WpmlSupport::isAvailable()) {
         new WpmlSupport();
+    }
+
+    if (defined( 'DECOUPLED_CLIENT_URL' ))
+    {
+        add_action( 'admin_bar_menu', 'decoupled_viewsite_link', 80 );
     }
 });
