@@ -105,7 +105,12 @@
                             $timezone = 'Europe/Berlin';
                             $date = new \DateTime( $datetime, new \DateTimeZone( 'UTC' ) );
                             $date->setTimezone( new \DateTimeZone( $timezone ) );
-                            echo '<p>'.$date->format('Y/m/d H:i:s').' - '.$event['message'].'</p>';
+                            if (is_scalar($event['message'])) {
+                                $message = $event['message'];
+                            } else {
+                                $message = serialize($event['message']);
+                            }
+                            echo '<p>'.$date->format('Y/m/d H:i:s').' - '.$message.'</p>';
                             $i++;
                         }
                     } else {
