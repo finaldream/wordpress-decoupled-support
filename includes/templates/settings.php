@@ -92,8 +92,8 @@
         <p>
             <?php 
                 // TODO: Move the display logic to a method in CallbackNotifications Class
-                $log = get_transient( 'decoupled_notifications_base' );
-                if(sizeof($log) > 0) {
+                $log = (new CallbackNotifications())->getNotifications(['Cache']);
+                if($log && sizeof($log) > 0) {
                     $cacheEvents = array_filter($log, function ($event) {
                         return in_array('Cache', $event['tags']);
                     });

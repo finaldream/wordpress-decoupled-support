@@ -7,25 +7,7 @@
 class CallbackNotifications {
 
 	const API_NAMESPACE = 'wp/v2';
-	const DECOUPLED_NOTIFY_TRANSIENT = 'decoupled_notifications_base';
-
-    protected $notificationsLog;
-
-    /**
-	 * CallbackNotifications constructor.
-	 */
-	public function __construct() {
-        if ( false === ( $this->notificationsLog = get_transient(static::DECOUPLED_NOTIFY_TRANSIENT) ) ) {
-			$this->notificationsLog = [];
-			$initEvent = [
-				"date" => (new DateTime())->format(DateTime::ATOM),
-				"tags" => [],
-				"message" => 'Notifications Log Initiated'
-			];
-			array_push($this->notificationsLog, $initEvent); 
-            set_transient( static::DECOUPLED_NOTIFY_TRANSIENT, $this->notificationsLog, 12 * HOUR_IN_SECONDS );
-		}
-	}
+	const DECOUPLED_NOTIFY_TRANSIENT_PREFIX = 'decoupled_notification_';
 
 	/**
 	 * Register Notifications callback route.
@@ -63,8 +45,25 @@ class CallbackNotifications {
 			"tags" => $requestBody['tags'],
 			"message" => $requestBody['payload'],
 		];
-		array_push($this->notificationsLog, $logEvent); 
-		set_transient( static::DECOUPLED_NOTIFY_TRANSIENT, $this->notificationsLog, 24 * HOUR_IN_SECONDS );
+		$transientName = static::DECOUPLED_NOTIFY_TRANSIENT_PREFIX.$this->getNotificationId();
+		set_transient( $transientName, $logEvent, 24 * HOUR_IN_SECONDS );
 		return rest_ensure_response('success'); 
+	}
+	
+	public function getNotifications($tags)
+	{
+      global $wpdb;
+	  $res = $wpdb->get_results("SELECT option_value FROM {$wpdb->prefix}options WHERE option_name LIKE '_transient_decoupled_notification_%'", OBJECT);
+	  foreach ($res as $key => $value) {
+		  $res[$key] = unserialize($value->option_value);
+	  }
+	  return $res;
+	}
+
+	private function getNotificationId()
+	{
+		$result = get_option('decoupled_notifications_next_id', '1');
+		update_option('decoupled_notifications_next_id', $result+1, true);
+		return $result;
 	}
 }
