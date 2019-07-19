@@ -114,7 +114,7 @@ class RestPermalink
     }
 
 
-    protected function serialize($post, $request)
+    protected function serialize($post, $request, $viewMode = 'single')
     {
 
         $controller = new WP_REST_Posts_Controller($post->post_type);
@@ -126,7 +126,7 @@ class RestPermalink
             'result' => [$prepared->data],
             'meta' => [
                 'type' => $post->post_type,
-                'view_mode' => 'single',
+                'view_mode' => $viewMode,
                 'template' => $template,
             ],
         ];

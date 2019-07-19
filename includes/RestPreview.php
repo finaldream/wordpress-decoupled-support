@@ -58,9 +58,7 @@ class RestPreview extends RestPermalink
             $post->ID = $preview->ID;
         }
 
-        $serialized = $this->serialize($post, $request);
-
-        $serialized = apply_filters('rest_preview_response', $serialized);
+        $serialized = $this->serialize($post, $request, 'preview');
 
         return rest_ensure_response($serialized);
 
