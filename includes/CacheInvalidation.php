@@ -3,7 +3,6 @@
  * Cache Invalidation
  */
 
-
 class CacheInvalidation {
 
 	public $url = '';
@@ -48,7 +47,7 @@ class CacheInvalidation {
 			$this->triggered( [
 				'action' => 'flush'
 			] );
-			wp_send_json_success( 'All cache was cleared' );
+			wp_send_json_success( 'Start clearing cache...' );
 		} catch ( Exception $e ) {
 			wp_send_json_error( $e->getMessage() );
 		}

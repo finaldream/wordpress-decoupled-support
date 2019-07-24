@@ -86,5 +86,13 @@
             <a id="decoupled_flush_cache" href="#" class="decoupled-clear-cache button button-large" data-action="decoupled_flush_cache">Clear all Caches</a>
             <span class="spinner" style="float: none"></span>
         </p>
+        <p>
+            <strong>Latest Cache Clearing Status:</strong>
+        </p>
+        <p>
+            <?php 
+                echo (new CallbackNotifications())->printNotifications(['Cache'], false, 5);
+            ?>             
+        </p>
 </div>
 

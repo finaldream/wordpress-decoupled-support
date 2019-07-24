@@ -25,6 +25,7 @@ include_once 'includes/RestAdmin.php';
 include_once 'includes/RestList.php';
 include_once 'includes/RestRewrite.php';
 include_once 'includes/CacheInvalidation.php';
+include_once 'includes/CallbackNotifications.php';
 
 include_once 'includes/thirdparty/WpmlSupport.php';
 
@@ -52,6 +53,7 @@ function decoupled_rest_api_init()
     (new RestFields())->registerRestFields();
     (new RestWPML())->registerFilters();
     (new RestRewrite())->rewrite();
+	(new CallbackNotifications())->registerRoutes();
 
 }
 
