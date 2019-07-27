@@ -99,10 +99,10 @@ class CallbackNotifications {
 			} else {
 				$message = serialize($event->payload);
 			}
-			$res .= '<p>'.$date->format('Y/m/d H:i:s').' - '.$message.'</p>';
+			$res .= '<li><strong>'.$date->format('Y/m/d H:i:s').'</strong> - '.$message.'</li>';
 		}
 	  } else  {
-		$res .= '<p>No notifications found</p>';
+		$res .= '<li>There are currently no notifications</li>';
 	  }
 	  return $res;
 	}

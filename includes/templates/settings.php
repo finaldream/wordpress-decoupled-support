@@ -23,7 +23,7 @@
                     <label for="decoupled_token">Decoupled Auth Token</label>
                 </th>   
                 <td>
-                    <?php echo (defined('DECOUPLED_TOKEN') && DECOUPLED_TOKEN != null ) ? 
+                    <?php echo (defined('DECOUPLED_TOKEN') && !empty(DECOUPLED_TOKEN) ) ? 
                     DECOUPLED_TOKEN 
                     : 'Please define constant DECOUPLED_TOKEN'; ?>
                 </td>
@@ -33,7 +33,7 @@
                     <label for="decoupled_cache_invalidation_url">Cache Invalidation URL</label>
                 </th>
                 <td>
-                    <?php echo (defined('DECOUPLED_CACHE_INVALIDATION_URL') && DECOUPLED_CACHE_INVALIDATION_URL != null ) ? 
+                    <?php echo (defined('DECOUPLED_CACHE_INVALIDATION_URL') && !empty(DECOUPLED_CACHE_INVALIDATION_URL) ) ? 
                     DECOUPLED_CACHE_INVALIDATION_URL 
                     : 'Please define constant DECOUPLED_CACHE_INVALIDATION_URL'; ?>
                 </td>
@@ -48,12 +48,16 @@
                     <label for="decoupled_client_url">Decoupled Client URL (including Protocol)</label>
                 </th>
                 <td>
-                    <?php echo (defined('DECOUPLED_CLIENT_URL') && DECOUPLED_CLIENT_URL != null ) ? 
+                    <?php echo (defined('DECOUPLED_CLIENT_URL') && !empty(DECOUPLED_CLIENT_URL) ) ? 
                         DECOUPLED_CLIENT_URL 
                         : 'Please define constant DECOUPLED_CLIENT_URL'; ?>
                 </td>
             </tr>
-            <?php if ( (defined('DECOUPLED_CLIENT_URL') && DECOUPLED_CLIENT_URL != null ) && !filter_var(DECOUPLED_CLIENT_URL, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) { ?>
+            <?php 
+                if ( (defined('DECOUPLED_CLIENT_URL') 
+                    && !empty(DECOUPLED_CLIENT_URL) ) 
+                    && !filter_var(DECOUPLED_CLIENT_URL, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) { 
+            ?>
             <tr>
                 <th style="color: red;" colspan="2">
                     WARNING: The Decoupled Client URL must include the protocol ( http:// or https:// )
@@ -65,7 +69,7 @@
                     <label for="decoupled_upload_url">Uploads URL</label>
                 </th>
                 <td>
-                    <?php echo (defined('DECOUPLED_UPLOAD_URL') && DECOUPLED_UPLOAD_URL != null ) ? 
+                    <?php echo (defined('DECOUPLED_UPLOAD_URL') && !empty(DECOUPLED_UPLOAD_URL) ) ? 
                         DECOUPLED_UPLOAD_URL 
                         : 'Please define constant DECOUPLED_UPLOAD_URL'; ?>
                 </td>
@@ -75,7 +79,7 @@
                     <label for="decoupled_upload_url">Basic Authentication (Cache Clear)</label>
                 </th>
                 <td>
-                    <?php echo (defined('DECOUPLED_BASIC_AUTH') && DECOUPLED_BASIC_AUTH != null ) ? 
+                    <?php echo (defined('DECOUPLED_BASIC_AUTH') && !empty(DECOUPLED_BASIC_AUTH) ) ? 
                         'Basic Authentication is set'
                         : 'Please define constant DECOUPLED_BASIC_AUTH to enable it'; ?>
                 </td>
@@ -86,13 +90,11 @@
             <a id="decoupled_flush_cache" href="#" class="decoupled-clear-cache button button-large" data-action="decoupled_flush_cache">Clear all Caches</a>
             <span class="spinner" style="float: none"></span>
         </p>
-        <p>
-            <strong>Latest Cache Clearing Status:</strong>
-        </p>
-        <p>
+        <h3>Latest Cache Clearing Status:</h3>
+        <ul>
             <?php 
                 echo (new CallbackNotifications())->printNotifications(['Cache'], false, 5);
             ?>             
-        </p>
+        </ul>
 </div>
 

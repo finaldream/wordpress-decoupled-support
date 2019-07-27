@@ -166,7 +166,7 @@ class CacheInvalidation {
 		$headers = [
 			'Content-Type' => 'application/json; charset=utf-8'
 		];
-		if (defined(DECOUPLED_BASIC_AUTH) && DECOUPLED_BASIC_AUTH != null ) {
+		if (defined('DECOUPLED_BASIC_AUTH') && !empty(DECOUPLED_BASIC_AUTH) ) {
 			$headers['Authorization'] = 'Basic '. base64_encode(DECOUPLED_BASIC_AUTH);
 		}
 		$response = wp_remote_post( $this->url, [
