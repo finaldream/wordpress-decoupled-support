@@ -1,4 +1,6 @@
 <?php
+use ___PHPSTORM_HELPERS\object;
+
 /**
  * Rest Single post/page query by permalink
  */
@@ -90,11 +92,11 @@ class RestPermalink
         }
 
         if (!$post) {
-            return new WP_Error('REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $q]);
+            return $this->handleNotFound($q, $request);
         }
 
         if ( trim(wp_make_link_relative(get_permalink($post)), '/') != trim($q, '/') ) {
-            return new WP_Error('REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $q]);
+            return $this->handleNotFound($q, $request);
         }
 
         $serialized = $this->serialize($post, $request);
@@ -113,6 +115,33 @@ class RestPermalink
 
     }
 
+    protected function handleNotFound(string $queryString, $request)
+    {
+        if (defined('DECOUPLED_NOTFOUND_SLUG')) $notFoundPage = findPostBySlug(DECOUPLED_NOTFOUND_SLUG);
+        if (isset($notFoundPage) && !empty($notFoundPage)) {
+            $controller = new WP_REST_Posts_Controller($notFoundPage->post_type);
+            $prepared = $controller->prepare_item_for_response($notFoundPage, $request);
+            $customError = [
+                "code" => "REST_NOT_FOUND",
+                "message" => "No single found",
+                "data" => [
+                    "status" => 404,
+                    "url" => $queryString
+                ],
+                "result" =>  [$prepared->data],
+                "meta" => [
+                    'type' => $notFoundPage->post_type,
+                    'view_mode' => 'single',
+                    'template' => '404-error',
+                ]
+            ];
+            $customError = rest_ensure_response($customError);
+            $customError->set_status(404);
+            return $customError;
+        }
+        return new WP_Error('REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $queryString]);
+        
+    }
 
     protected function serialize($post, $request, $viewMode = 'single')
     {
