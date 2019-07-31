@@ -59,13 +59,17 @@ function decoupled_rest_api_init()
 
 function decoupled_rest_authentication($result)
 {
-
-    (new RestToken())->protect($result);
+    /*
+     * This protection should be used only when the user is not logged in, or remote calls
+     */
+    if (!is_user_logged_in()) {
+        (new RestToken())->protect($result);
+    }
 }
 
 function decoupled_admin_warning()
 {
-    if(in_array('administrator', wp_get_current_user()->roles)) //check the current user role 
+    if(in_array('administrator', wp_get_current_user()->roles)) //check the current user role
     {
         $class = 'notice notice-warning is-dismissible';
         $message = 'Please check the messages in Decoupled Settings';
@@ -87,8 +91,8 @@ add_filter('rest_authentication_errors', 'decoupled_rest_authentication');
 
 add_action('init', function () {
     //Check Env Constants
-    if ( !defined( 'DECOUPLED_TOKEN' ) || 
-         !defined( 'DECOUPLED_CLIENT_URL' ) || 
+    if ( !defined( 'DECOUPLED_TOKEN' ) ||
+         !defined( 'DECOUPLED_CLIENT_URL' ) ||
          !defined( 'DECOUPLED_CACHE_INVALIDATION_URL' ) ||
          !defined( 'DECOUPLED_UPLOAD_URL' ) ) {
             // We might activate later on, saving dissmisses state
