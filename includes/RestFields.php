@@ -31,8 +31,27 @@ class RestFields
         $this->registerTemplateField();
         $this->registerPostMetaField();
         $this->registerCategoriesField();
+        $this->registerOriginalContent();
     }
 
+
+    /**
+     * Original Content field
+     * Added to use in 404 pages and restricted to the postType 'page'
+     */
+    public function registerOriginalContent()
+    {
+        register_rest_field('page', 'original_content', [
+            'get_callback' => function ($object) {
+                return get_post_field('post_content', $object['id']);
+            },
+            'update_callback' => null,
+            'schema' => [
+                'description' => __('Orignal Content'),
+                'type' => 'string'
+            ],
+        ]);
+    }
 
     /**
      * Template field
