@@ -116,10 +116,24 @@ class RestPermalink
     protected function handleNotFound(string $queryString)
     {   
         if (defined('DECOUPLED_NOTFOUND_SLUG') && !empty(DECOUPLED_NOTFOUND_SLUG) ) {
-            add_filter('rest_post_dispatch', function (\WP_REST_Response $response, \WP_REST_Server $server, \WP_REST_Request $request) {
-                if ($response->status == 404 ){
-                    $notFoundPage = findPostBySlug(DECOUPLED_NOTFOUND_SLUG);
-                    if (isset($notFoundPage) && $notFoundPage instanceof \WP_Post) { 
+
+            $notFoundPage = findPostBySlug(DECOUPLED_NOTFOUND_SLUG);
+            
+            if (isset($notFoundPage) && $notFoundPage instanceof \WP_Post) { 
+            
+                register_rest_field('page', 'original_content', [
+                    'get_callback' => function () use ($notFoundPage) {
+                        return $notFoundPage->post_content;
+                    },
+                    'update_callback' => null,
+                    'schema' => [
+                        'description' => __('Orignal Content'),
+                        'type' => 'string'
+                    ],
+                ]);
+            
+                add_filter('rest_post_dispatch', function (\WP_REST_Response $response, \WP_REST_Server $server, \WP_REST_Request $request) use ($notFoundPage) {
+                    if ($response->status == 404 ){
                         $controller = new WP_REST_Posts_Controller($notFoundPage->post_type);
                         $prepared = $controller->prepare_item_for_response($notFoundPage, $request);     
                         $response->data['result'] = [$prepared->data];
@@ -128,12 +142,11 @@ class RestPermalink
                             'view_mode' => 'single',
                             'template' => '404-error',
                         ];
-                    }
-                }
+                    }                
+                    return $response;                
+                }, 10, 3);
             
-                return $response;
-            
-            }, 10, 3);
+            }
         }
 
         return new WP_Error('REST_NOT_FOUND', 'No single found', ['status' => 404, 'url' => $queryString]);
