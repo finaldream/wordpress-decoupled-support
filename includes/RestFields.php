@@ -33,7 +33,6 @@ class RestFields
         $this->registerCategoriesField();
     }
 
-
     /**
      * Template field
      */

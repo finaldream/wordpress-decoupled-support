@@ -84,6 +84,35 @@
                         : 'Please define constant DECOUPLED_BASIC_AUTH to enable it'; ?>
                 </td>
             </tr>
+            <tr>
+                <th>
+                    <label for="decoupled_notfound_slug">Page content for 404 (Not found) errors</label>
+                </th>
+                <td>
+                    <?php 
+                        if (defined('DECOUPLED_NOTFOUND_SLUG') && !empty(DECOUPLED_NOTFOUND_SLUG)) {
+                            $query = new WP_Query(
+                                array(
+                                    'name'   => DECOUPLED_NOTFOUND_SLUG,
+                                    'post_type'   => 'page',
+                                    'numberposts' => 1,
+                                    'fields'      => 'ids',
+                                ) 
+                            );
+                            $posts = $query->get_posts();
+                            if (sizeof($posts) == 1) $link = get_edit_post_link($posts[0], 'link');
+                            if (!isset($link)) {
+                                $result = DECOUPLED_NOTFOUND_SLUG . ' - Please <a href="'. admin_url('post-new.php?post_type=page&post_title='.DECOUPLED_NOTFOUND_SLUG) .'">create a new page</a> with this slug';
+                            } else {
+                                $result =  DECOUPLED_NOTFOUND_SLUG . ' - <a href="'. $link .'">Click here to edit</a>'; 
+                            }
+                        } else {
+                            $result = 'Please define constant DECOUPLED_NOTFOUND_SLUG to an existing page slug';
+                        }
+                        echo $result;
+                    ?>
+                </td>
+            </tr>
             </tbody>
         </table>
         <p class="submit">
