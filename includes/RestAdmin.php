@@ -30,13 +30,8 @@ class RestAdmin
     public function currentScreen() {
 
         if ( function_exists('get_current_screen')) {
-            $screen = get_current_screen();
-
-            // Only override WP permalink on edit screen to avoid side effects
-            if ($screen->base === 'post') {
-                add_filter('post_link', [$this, 'alterPermalink'], 100, 3);
-                add_filter('page_link', [$this, 'alterPermalink'], 100, 3);
-            }
+            add_filter('post_link', [$this, 'alterPermalink'], 100, 3);
+            add_filter('page_link', [$this, 'alterPermalink'], 100, 3);
         }
     }
 
