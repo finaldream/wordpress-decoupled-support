@@ -57,7 +57,9 @@ class CallbackNotifications {
 	
 	public function getNotifications(array $tags = [], bool $orderAsc = false, int $limit = null) : array
 	{
-      global $wpdb;
+	  global $wpdb;
+	  //$wpdb->get_results("SELECT * FROM JSON_TABLE( '[ {\"a\": 1, \"b\": [11,111]}, {\"a\": 2, \"b\": [22,222]}, {\"a\":3}]', '$[*]' COLUMNS(a INT PATH '$.a', NESTED PATH '$.b[*]' COLUMNS (b INT PATH '$') ) ) AS jt WHERE b IS NOT NULL;");
+      //var_dump(!!$wpdb->last_error);die;
 	  $res = [];
 	  $queryString = "SELECT option_value FROM {$wpdb->prefix}options WHERE option_name LIKE '_transient_decoupled_notification_%'";
 	  if (sizeof($tags) > 0) 
@@ -68,6 +70,22 @@ class CallbackNotifications {
 	  $queryString .= $orderAsc ? " ORDER BY option_name ASC" : " ORDER BY option_name DESC";
 	  if ($limit) $queryString .= " LIMIT ".$limit;
 	  $set = $wpdb->get_results($queryString, OBJECT);
+
+	  // If JSON_CONTAINS is not available (MySQL < 5.7) get all notifications and filter locally
+	  if (!!$wpdb->last_error) {
+		$queryString = "SELECT option_value FROM {$wpdb->prefix}options WHERE option_name LIKE '_transient_decoupled_notification_%'";
+		$queryString .= $orderAsc ? " ORDER BY option_name ASC" : " ORDER BY option_name DESC";
+		$set = $wpdb->get_results($queryString, OBJECT);
+		foreach ($set as $key => $value) {
+			$event = json_decode($value->option_value);
+			if (!!count(array_intersect($tags, $event->tags))) {
+				$res[$key] = $event;
+			}
+			if ($limit && count($res) == $limit) break;
+		}
+		return $res;
+	  }
+
 	  foreach ($set as $key => $value) {
 		  $res[$key] = json_decode($value->option_value);
 	  }
