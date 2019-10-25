@@ -58,8 +58,6 @@ class CallbackNotifications {
 	public function getNotifications(array $tags = [], bool $orderAsc = false, int $limit = null) : array
 	{
 	  global $wpdb;
-	  //$wpdb->get_results("SELECT * FROM JSON_TABLE( '[ {\"a\": 1, \"b\": [11,111]}, {\"a\": 2, \"b\": [22,222]}, {\"a\":3}]', '$[*]' COLUMNS(a INT PATH '$.a', NESTED PATH '$.b[*]' COLUMNS (b INT PATH '$') ) ) AS jt WHERE b IS NOT NULL;");
-      //var_dump(!!$wpdb->last_error);die;
 	  $res = [];
 	  $queryString = "SELECT option_value FROM {$wpdb->prefix}options WHERE option_name LIKE '_transient_decoupled_notification_%'";
 	  if (sizeof($tags) > 0) 
