@@ -204,8 +204,9 @@ class RestFields
 
                     $permalink = apply_filters('WPML_filter_link', $language['url'], $language);
 
-                    // Not add uri into front pages
-                    if (!in_array($postId, $frontPages)) {
+                    // Not add uri for front-pages
+                    $isFrontPage = in_array($postId, $frontPages);
+                    if (!$isFrontPage) {
                         $uri = get_page_uri($postId);
 
                         if (strpos($permalink, '?') !== false) {
@@ -214,19 +215,24 @@ class RestFields
                             $permalink .= (substr($permalink, -1) !== '/') ? '/' : '';
                             $permalink .= $uri . '/';
                         }
-                    }
+                    } 
 
                     $translations[] = [
                         'locale' => $language['default_locale'],
                         'code' => $language['language_code'],
                         'id' => $post->ID,
                         'post_title' => $post->post_title,
-                        'permalink' => UrlUtils::stripAllDomain(get_permalink($post->ID)),
+                        'permalink' => UrlUtils::stripAllDomain($permalink),
+                        'is_front_page' => $isFrontPage,
                     ];
                 }
 
+                $current_locale = wpml_get_language_information($object);
+
                 return [
-                    'current_locate' => wpml_get_language_information($object),
+                    // TODO: Remove in next major verion
+                    'current_locate' => $current_locale,
+                    'current_locale' => $current_locale,
                     'translations' => $translations,
                 ];
             },
