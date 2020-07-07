@@ -248,12 +248,16 @@ class RestMenus
             ? get_post($item['object_id'])->post_name
             : $item['post_name'];
 
+        $url = $item['type'] === 'post_type' 
+            ? apply_filters( 'wpml_permalink', get_permalink($item['object_id']))
+            : $item['url'];
+
         $menu_item = [
             'id' => abs($item['ID']),
             'order' => (int) $item['menu_order'],
             'parent' => abs($item['menu_item_parent']),
             'title' => $item['title'],
-            'url' => UrlUtils::getInstance()->replaceDomain($item['url']),
+            'url' => UrlUtils::getInstance()->replaceDomain($url),
             'attr' => $item['attr_title'],
             'target' => $item['target'],
             'classes' => implode(' ', apply_filters('nav_menu_css_class', array_filter($item['classes']), $item)),
