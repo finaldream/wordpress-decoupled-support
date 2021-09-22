@@ -22,6 +22,7 @@ class RestPreview extends RestPermalink
             [
                 'methods' => WP_REST_Server::READABLE,
                 'callback' => [$this, 'getPreview'],
+                'permission_callback' => '__return_true',
                 'args' => [
                     'preview_id' => [
                         'default' => false,

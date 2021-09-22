@@ -20,6 +20,7 @@ class CallbackNotifications {
 			[
 				'methods' => WP_REST_Server::EDITABLE,
 				'callback' => [$this, 'setNotification'],
+				'permission_callback' => '__return_true',
 				'args' => [
 					'date' => [
 						'default' => time(),

@@ -26,6 +26,7 @@ class RestMenus
             [
                 'methods' => WP_REST_Server::READABLE,
                 'callback' => [$this, 'getMenus'],
+                'permission_callback' => '__return_true',
             ]
         ]);
 

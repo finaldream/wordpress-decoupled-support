@@ -28,6 +28,7 @@ class RestList
             [
                 'methods' => WP_REST_Server::READABLE,
                 'callback' => [$this, 'getList'],
+                'permission_callback' => '__return_true',
             ]
         );
     }

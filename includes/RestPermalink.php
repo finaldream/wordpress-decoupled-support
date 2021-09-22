@@ -52,6 +52,7 @@ class RestPermalink
             [
                 'methods' => WP_REST_Server::READABLE,
                 'callback' => [$this, 'getPermalink'],
+                'permission_callback' => '__return_true',
                 'args' => [
                     'q' => [
                         'default' => false
