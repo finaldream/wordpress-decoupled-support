@@ -39,6 +39,16 @@
                 </td>
             </tr>
             <tr>
+                <th>
+                    <label for="decoupled_cache_permalink_smaxage">Cache Permalink Server Max Age (for CDN)</label>
+                </th>
+                <td>
+                    <?php echo (defined('DECOUPLED_PERMALINK_S_MAX_AGE') && !empty(DECOUPLED_PERMALINK_S_MAX_AGE) ) ? 
+                    DECOUPLED_PERMALINK_S_MAX_AGE . ' seconds'
+                    : '10 minutes (default)'; ?>
+                </td>
+            </tr>
+            <tr>
                 <td colspan="2">
                     <h3>URL Settings</h3>
                 </td>
@@ -56,7 +66,7 @@
             <?php 
                 if ( (defined('DECOUPLED_CLIENT_URL') 
                     && !empty(DECOUPLED_CLIENT_URL) ) 
-                    && !filter_var(DECOUPLED_CLIENT_URL, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) { 
+                    && !filter_var(DECOUPLED_CLIENT_URL, FILTER_VALIDATE_URL)) { 
             ?>
             <tr>
                 <th style="color: red;" colspan="2">
