@@ -100,7 +100,17 @@ class RestPermalink
 
         $serialized = $this->serialize($post, $request);
 
-        return rest_ensure_response($serialized);
+        $cacheLimit = (defined('DECOUPLED_PERMALINK_S_MAX_AGE') && !empty(DECOUPLED_PERMALINK_S_MAX_AGE) )
+            ? DECOUPLED_PERMALINK_S_MAX_AGE
+            : 60*10; //defaults at 10 minutes
+        
+        $headers = [
+            'Cache-Control' => 'max-age=0, s-maxage='.$cacheLimit,
+        ];
+
+        $response =  new \WP_REST_Response($serialized, 200, $headers);
+
+        return rest_ensure_response($response);
     }
 
     function getTemplate($post) {
