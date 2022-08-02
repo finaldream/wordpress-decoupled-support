@@ -29,6 +29,7 @@ class CacheInvalidation {
 		add_action( 'wp_ajax_decoupled_flush_cache', [ $this, 'ajaxFlushCache' ] );
 		add_action( 'wp_ajax_decoupled_invalidate_cache', [ $this, 'ajaxInvalidateCache' ] );
 		add_action( 'save_post', [ $this, 'invalidateCache' ], 10, 2 );
+		add_action('future_to_publish', [$this, 'invalidateCache'], 10, 2);
 
 		add_filter( 'post_row_actions', [ $this, 'rowActions' ], 200, 2 );
 
