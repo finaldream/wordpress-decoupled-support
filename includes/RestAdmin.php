@@ -135,7 +135,7 @@ class RestAdmin
 
 		if (!empty($clientDomain)) {
 
-			return sprintf('%s/preview/?preview_id=%s&token=%s',
+			return sprintf('%s/api/preview/?preview_id=%s&token=%s',
                 untrailingslashit($clientDomain),
 				$post->ID,
 				base64_encode( 'decoupled-preview-token_'.$post->ID )

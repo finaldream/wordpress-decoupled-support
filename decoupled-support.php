@@ -3,7 +3,7 @@
  * Plugin Name:       Decoupled Support
  * Plugin URI:        https://www.finaldream.de
  * Description:       Add Decoupled client supports for WP REST API
- * Version:           2.5.0
+ * Version:           2.8.0
  * Author:            Finaldream Productions
  * Author URI:        https://www.finaldream.de
  * License:           MIT
