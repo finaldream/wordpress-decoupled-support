@@ -173,11 +173,22 @@ class CacheInvalidation {
 		$response = wp_remote_post( $this->url, [
 		    'headers' => $headers,
 			'body'    => json_encode([ 'cache' => $args ]),
+            'timeout'     => 15,
 		] );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			throw new Exception( $error_message );
+
+            add_action('admin_notices', function () use ($error_message) {
+                ?>
+                <div class="notice notice-warning is-dismissible">
+                    <p>
+                        <?= __('Some cache invalidation may have failed.'); ?><br />
+                        <?= $error_message; ?>
+                    </p>
+                </div>
+                <?php
+            });
 		}
 
 	}
